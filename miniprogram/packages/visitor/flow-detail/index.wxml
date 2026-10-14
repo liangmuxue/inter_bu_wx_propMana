@@ -1,0 +1,232 @@
+<view class="page">
+  <view class="container" wx:if="{{visit}}">
+    <view class="status-hero tone-{{visit.approvalHeroTone}}">
+      <text class="hero-eyebrow">APPROVAL STATUS</text>
+      <view class="hero-title-row">
+        <text class="hero-title">{{visit.approvalHeroLabel}}</text>
+      </view>
+      <text class="hero-hint">{{visit.approvalHeroDetail}}</text>
+    </view>
+
+    <view class="card">
+      <view class="card-title-row">
+        <text class="card-title">到访安排</text>
+        <text class="status-tag tone-{{visit.approvalHeroTone}}">{{visit.approvalHeroLabel}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">被访组织</text>
+        <text class="kv-value">{{visit.visitDepartmentName}}</text>
+      </view>
+      <view class="kv-row" wx:if="{{visit.showHostPerson}}">
+        <text class="kv-label">被访人</text>
+        <text class="kv-value">{{visit.hostName}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">访问开始</text>
+        <text class="kv-value">{{visit.visitStartText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">访问结束</text>
+        <text class="kv-value">{{visit.visitEndText}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">访客信息</view>
+      <view class="kv-row">
+        <text class="kv-label">访客姓名</text>
+        <text class="kv-value">{{visit.visitorName}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">证件号</text>
+        <text class="kv-value">{{visit.idCard || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">手机号</text>
+        <text class="kv-value">{{visit.visitorMobileMasked}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">同行人（{{visit.companionCount}}人）</view>
+      <block wx:if="{{visit.companions.length}}">
+        <block wx:for="{{visit.companions}}" wx:key="index">
+          <view class="companion-block">
+            <text class="companion-title">同行人{{index + 1}}</text>
+            <view class="kv-row">
+              <text class="kv-label">姓名</text>
+              <text class="kv-value">{{item.name || '—'}}</text>
+            </view>
+            <view class="kv-row">
+              <text class="kv-label">证件号</text>
+              <text class="kv-value">{{item.idCard || '—'}}</text>
+            </view>
+            <view class="kv-row">
+              <text class="kv-label">手机号</text>
+              <text class="kv-value">{{item.phone || '—'}}</text>
+            </view>
+          </view>
+        </block>
+      </block>
+      <view wx:else class="companion-empty">无同行人</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">补充信息</view>
+      <view class="kv-row">
+        <text class="kv-label">来访事由</text>
+        <text class="kv-value">{{visit.reasonText}}</text>
+      </view>
+      <view class="kv-row" wx:if="{{visit.companyText && visit.companyText !== '—'}}">
+        <text class="kv-label">来访单位</text>
+        <text class="kv-value">{{visit.companyText}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">单据信息</view>
+      <view class="kv-row">
+        <text class="kv-label">单据编号</text>
+        <text class="kv-value">{{visit.id}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">方式</text>
+        <text class="kv-value">{{visit.modeLabel}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">{{visit.createdLabel}}</text>
+        <text class="kv-value">{{visit.createdAt || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">{{visit.operatorLabel}}</text>
+        <text class="kv-value">{{visit.operatorValue}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">审批信息</view>
+      <view class="kv-row">
+        <text class="kv-label">审批人</text>
+        <text class="kv-value">{{visit.approvalPersonText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">审批时间</text>
+        <text class="kv-value">{{visit.approvalTimeText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">通行权限组</text>
+        <text class="kv-value">{{visit.showApprovePermissionGroup ? visit.permissionGroupDisplay : '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">审批说明</text>
+        <text class="kv-value {{visit.flowStatus === '已驳回' ? 'is-reject-remark' : ''}}">{{visit.approvalRemarkText}}</text>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{visit.flowSteps.length}}">
+      <view class="card-title-row">
+        <text class="card-title">审批流程</text>
+        <text class="card-meta">{{visit.flowSteps.length}} 个节点</text>
+      </view>
+      <view class="flow-list">
+        <view wx:for="{{visit.flowSteps}}" wx:key="index" class="flow-item">
+          <view class="flow-item-head">
+            <text class="flow-item-title">{{item.title}}</text>
+            <text class="status-tag tone-{{item.className === 'done' ? 'green' : (item.className === 'rejected' ? 'red' : (item.className === 'current' ? 'blue' : 'slate'))}}">{{item.label}}</text>
+          </view>
+          <view class="kv-row" wx:if="{{item.meta}}">
+            <text class="kv-value">{{item.meta}}</text>
+          </view>
+          <view class="kv-row" wx:if="{{item.opinion}}">
+            <text class="kv-label">审批意见</text>
+            <text class="kv-value">{{item.opinion}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="container" wx:elif="{{!loading}}">
+    <view class="empty">暂无单据详情</view>
+  </view>
+
+  <view class="approve-dock" wx:if="{{visit && visit.canApprove}}">
+    <button class="btn-reject" bindtap="onReject" loading="{{submitting}}" disabled="{{submitting}}">驳回</button>
+    <button class="btn-pass" bindtap="onApprove" loading="{{submitting}}" disabled="{{submitting}}">通过</button>
+  </view>
+
+  <view wx:if="{{showDecideSheet}}" class="sheet-mask" bindtap="closeDecideSheet" catchtouchmove="preventClose">
+    <view class="decide-sheet" catchtap="preventClose">
+      <view class="sheet-hd">
+        <text class="sheet-title">{{decidePass ? '通过这条审批？' : '驳回这条审批？'}}</text>
+        <text class="sheet-close" bindtap="closeDecideSheet">关闭</text>
+      </view>
+
+      <view class="decide-context" wx:if="{{visit}}">
+        <view class="decide-avatar">{{visit.visitorName[0] || '访'}}</view>
+        <view class="decide-context-copy">
+          <text class="decide-name">{{visit.visitorName}}</text>
+          <text class="decide-sub">{{visit.visitorMobileMasked}} · 被访组织审批</text>
+        </view>
+      </view>
+
+      <view class="sheet-field" wx:if="{{decidePass}}">
+        <text class="sheet-label">通行权限组</text>
+        <view
+          class="perm-field {{canAdjustPermission ? '' : 'is-locked'}}"
+          bindtap="openPermPicker"
+        >
+          <text class="perm-name">{{permGroupName || '请选择通行权限组'}}</text>
+          <text class="perm-devices">{{permDeviceText || '按被访组织可用范围单选'}}</text>
+          <text class="perm-arrow" wx:if="{{canAdjustPermission}}">›</text>
+          <text class="perm-locked-tip" wx:else>当前审批节点不允许调整</text>
+        </view>
+      </view>
+
+      <view class="sheet-field">
+        <text class="sheet-label">审批说明</text>
+        <textarea
+          class="remark-input"
+          placeholder="选填；驳回时建议填写原因"
+          value="{{remark}}"
+          maxlength="200"
+          bindinput="onRemarkInput"
+        />
+      </view>
+      <view class="sheet-actions">
+        <button class="btn-sheet-cancel" bindtap="closeDecideSheet">取消</button>
+        <button
+          class="{{decidePass ? 'btn-sheet-pass' : 'btn-sheet-reject'}}"
+          bindtap="confirmDecide"
+          loading="{{submitting}}"
+          disabled="{{submitting}}"
+        >确认{{decidePass ? '通过' : '驳回'}}</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showPermPicker}}" class="sheet-mask is-nested" bindtap="closePermPicker" catchtouchmove="preventClose">
+    <view class="decide-sheet perm-picker-sheet" catchtap="preventClose">
+      <view class="sheet-hd">
+        <text class="sheet-title">选择通行权限组</text>
+        <text class="sheet-close" bindtap="closePermPicker">关闭</text>
+      </view>
+      <view class="perm-hint">按被访组织可用范围单选；数据来源于通行权限模块，列表展示各组可通行门禁设备。</view>
+      <view
+        wx:for="{{permGroups}}"
+        wx:key="permissionGroupId"
+        class="perm-option {{permGroupId === item.permissionGroupId ? 'active' : ''}}"
+        bindtap="onPickPerm"
+        data-id="{{item.permissionGroupId}}"
+        data-name="{{item.permissionGroupName}}"
+        data-devices="{{item.deviceText}}"
+      >
+        <view class="perm-option-copy">
+          <text class="perm-name">{{item.permissionGroupName}}</text>
+          <text class="perm-devices">{{item.deviceText}}</text>
+        </view>
+        <text class="perm-check" wx:if="{{permGroupId === item.permissionGroupId}}">✓</text>
+      </view>
+    </view>
+  </view>
+</view>

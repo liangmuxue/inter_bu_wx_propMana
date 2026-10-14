@@ -1,0 +1,115 @@
+<view class="page" wx:if="{{order && typeMeta}}">
+  <view class="container">
+    <view class="card summary-card">
+      <text class="summary-code">{{order.id}}</text>
+      <text class="summary-content">{{order.content}}</text>
+      <text class="summary-meta">上报区域：{{order.regionName}}</text>
+    </view>
+
+    <view class="card" wx:if="{{typeMeta.hint}}">
+      <text class="form-hint block">{{typeMeta.hint}}</text>
+    </view>
+
+    <view class="card" wx:if="{{typeMeta.needCategory}}">
+      <view class="section-title">工单分类 <text class="req">*</text></view>
+      <picker mode="selector" range="{{categories}}" range-key="name" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view class="form-picker {{categoryName ? '' : 'is-placeholder'}}">
+          {{categoryName || '请选择工单分类'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="card" wx:if="{{typeMeta.needHandlers}}">
+      <view class="section-title">指派处理人 <text class="req">*</text></view>
+      <text class="hint">仅限本区域处理人，可多选</text>
+      <view class="handler-trigger {{selectedSummary ? '' : 'is-placeholder'}}" bindtap="openHandlerSheet">
+        <text class="handler-trigger-text">{{selectedSummary || '请选择处理人'}}</text>
+        <text class="handler-trigger-arrow">›</text>
+      </view>
+      <text class="selected-hint" wx:if="{{selectedCount}}">已选 {{selectedCount}} 人</text>
+    </view>
+
+    <view class="card">
+      <view class="section-title">{{typeMeta.remarkLabel}}<text wx:if="{{typeMeta.remarkRequired}}" class="req"> *</text></view>
+      <textarea
+        class="remark-input"
+        placeholder="{{typeMeta.remarkPlaceholder || ('请填写' + typeMeta.remarkLabel)}}"
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        maxlength="500"
+      />
+    </view>
+
+    <view class="card" wx:if="{{typeMeta.needMedia}}">
+      <view class="form-field">
+        <view class="field-head">
+          <text class="form-label">{{typeMeta.imageLabel}}</text>
+          <text class="form-hint">选填，最多 {{maxImages}} 张，点击缩略图查看</text>
+        </view>
+        <view class="upload-grid">
+          <view wx:for="{{images}}" wx:key="path" class="upload-item">
+            <image
+              class="upload-thumb"
+              src="{{item.path}}"
+              mode="aspectFill"
+              bindtap="previewImage"
+              data-index="{{index}}"
+            />
+            <text class="upload-remove" catchtap="removeImage" data-index="{{index}}">×</text>
+          </view>
+          <view
+            wx:if="{{images.length < maxImages}}"
+            class="upload-add"
+            bindtap="chooseImages"
+          >
+            <text class="upload-add-icon">+</text>
+            <text class="upload-add-text">上传图片</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-field last">
+        <text class="form-label">{{typeMeta.attachmentLabel}}</text>
+        <text class="form-hint">选填，可上传多个文件</text>
+        <button class="tool-btn" bindtap="chooseAttachments" wx:if="{{attachments.length < maxAttachments}}">添加附件</button>
+        <view class="attachment-list" wx:if="{{attachments.length}}">
+          <view wx:for="{{attachments}}" wx:key="path" class="attachment-row">
+            <text class="attachment-name">{{item.name}}</text>
+            <text class="link" catchtap="removeAttachment" data-index="{{index}}">删除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer-bar">
+    <button class="footer-btn primary" loading="{{submitting}}" bindtap="submit">提交</button>
+  </view>
+</view>
+
+<view class="sheet-mask" wx:if="{{showHandlerSheet}}" bindtap="closeHandlerSheet" catchtouchmove="preventClose">
+  <view class="handler-sheet" catchtap="preventClose">
+    <view class="sheet-hd">
+      <text class="sheet-title">选择处理人</text>
+      <text class="sheet-close" bindtap="closeHandlerSheet">关闭</text>
+    </view>
+    <text class="sheet-hint">仅限本区域处理人，可多选</text>
+    <scroll-view scroll-y class="handler-sheet-scroll" enhanced show-scrollbar="{{false}}">
+      <view
+        wx:for="{{sheetHandlers}}"
+        wx:key="id"
+        class="handler-item {{item.checked ? 'active' : ''}}"
+        bindtap="onHandlerToggle"
+        data-id="{{item.id}}"
+      >
+        <view class="handler-check {{item.checked ? 'on' : ''}}"></view>
+        <text class="handler-name">{{item.name}}</text>
+      </view>
+      <view class="handler-empty" wx:if="{{!sheetHandlers.length}}">本区域暂无可选处理人</view>
+    </scroll-view>
+    <view class="sheet-foot">
+      <text class="sheet-selected">已选 {{sheetSelectedCount}} 人</text>
+      <button class="sheet-confirm" bindtap="confirmHandlerSheet">确定</button>
+    </view>
+  </view>
+</view>

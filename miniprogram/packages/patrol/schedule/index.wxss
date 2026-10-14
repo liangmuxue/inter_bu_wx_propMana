@@ -1,0 +1,217 @@
+@import '../common/patrol-subtask.wxss';
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 24rpx 32rpx 48rpx;
+}
+
+.today-card .today-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.today-team {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.today-sub {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.team-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  background: #F7FAFC;
+  border-radius: var(--radius);
+  border: 1rpx solid var(--color-border);
+}
+
+.field-label {
+  margin-bottom: 12rpx;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.my-team-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.my-team-tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 20rpx;
+  background: #F7FAFC;
+  border-radius: var(--radius);
+}
+
+.my-team-name {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.my-team-id {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+
+.info-hint {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.hint-card {
+  padding-top: 24rpx;
+  padding-bottom: 24rpx;
+}
+
+.scope-card .info-row:last-child {
+  margin-bottom: 0;
+}
+
+.preview-subhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+  margin: 24rpx 0 16rpx;
+}
+
+.preview-subtitle {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.preview-head .card-title {
+  margin-bottom: 0;
+}
+
+.tab-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.tab-item {
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  background: #F7FAFC;
+  border-radius: 999rpx;
+}
+
+.tab-item.active {
+  color: #fff;
+  background: var(--color-primary);
+}
+
+.week-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.week-row:last-child {
+  border-bottom: none;
+}
+
+.week-row.is-today {
+  background: #EBF4FF;
+  margin: 0 -16rpx;
+  padding: 16rpx;
+  border-radius: var(--radius);
+}
+
+.week-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.week-date {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.week-duty {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+
+.month-table {
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.month-head,
+.month-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 12rpx;
+}
+
+.month-head {
+  background: #F7FAFC;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.month-row {
+  font-size: 24rpx;
+  border-top: 1rpx solid var(--color-border);
+}
+
+.month-row.is-today {
+  background: #EBF4FF;
+}
+
+.month-row.is-me {
+  font-weight: 600;
+}
+
+.col-date {
+  width: 34%;
+}
+
+.col-week {
+  width: 22%;
+}
+
+.col-user {
+  flex: 1;
+  min-width: 0;
+  word-break: break-all;
+}
+
+.empty {
+  padding: 80rpx 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}

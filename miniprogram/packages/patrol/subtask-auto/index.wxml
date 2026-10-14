@@ -1,0 +1,96 @@
+<view class="container" wx:if="{{subtask}}">
+  <view class="card">
+    <view class="card-title">{{subtask.itemName}}</view>
+    <view class="info-row"><text class="info-label">子项编号</text><text class="info-value">{{subtask.code}}</text></view>
+    <view class="info-row"><text class="info-label">巡检项</text><text class="info-value">{{subtask.itemId}}</text></view>
+    <view class="info-row"><text class="info-label">检查方法</text><text class="info-value">自动巡检</text></view>
+    <view class="info-row"><text class="info-label">问题处理人</text><text class="info-value">{{subtask.issueHandlerName}}</text></view>
+    <view class="info-row"><text class="info-label">实际执行人</text><text class="info-value">{{subtask.completedByName || '—'}}</text></view>
+  </view>
+
+  <view class="card standard-panel">
+    <view class="standard-label">检查标准</view>
+    <text class="standard-text">{{subtask.standard}}</text>
+    <block wx:if="{{refImage}}">
+      <text class="ref-image-label">参考图片</text>
+      <view class="ref-image-stage tone-{{refImage.tone}}">
+        <view class="ref-image-placeholder">
+          <text class="ref-image-icon">图</text>
+          <text class="ref-image-name">{{refImage.itemName}}</text>
+          <text class="ref-image-code">{{refImage.itemId}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="hint-card">{{autoHint}}</view>
+
+  <view class="card" wx:if="{{pendingSystem}}">
+    <view class="card-title">执行方式</view>
+    <text class="standard-text">系统执行（人工不可操作）</text>
+  </view>
+
+  <view class="card" wx:if="{{subtask.autoRan || subtask.status === '已完成'}}">
+    <view class="card-title">AI 分析结果</view>
+    <view class="info-row"><text class="info-label">算法模型</text><text class="info-value">{{aiResult.model}}</text></view>
+    <view class="info-row"><text class="info-label">关联通道</text><text class="info-value">{{aiResult.channels}}</text></view>
+    <view class="info-row"><text class="info-label">分析结论</text><text class="info-value">{{aiResult.conclusion}}</text></view>
+    <view class="info-row"><text class="info-label">置信度</text><text class="info-value">{{aiResult.confidence}}</text></view>
+    <view class="detail-block">
+      <text class="detail-label">分析详情</text>
+      <text class="detail-text">{{aiResult.detail}}</text>
+    </view>
+  </view>
+
+  <view class="card result-panel" wx:if="{{subtask.autoRan || subtask.status === '已完成'}}">
+    <view class="card-title">巡检结果</view>
+    <view class="info-row"><text class="info-label">检查结果</text><text class="info-value">{{subtask.result || '—'}}</text></view>
+    <view class="info-row"><text class="info-label">备注说明</text><text class="info-value">{{subtask.remark || '—'}}</text></view>
+    <view class="info-row" wx:if="{{subtask.completedAt}}"><text class="info-label">完成时间</text><text class="info-value">{{subtask.completedAt}}</text></view>
+    <view wx:if="{{subtask.result === '异常' && savedIssues.length}}" class="issues-readonly">
+      <text class="issues-head-title">巡检问题</text>
+      <view wx:for="{{savedIssues}}" wx:key="id" class="issue-read-card">
+        <text class="issue-read-title">问题 {{index + 1}}</text>
+        <text class="issue-read-desc" wx:if="{{item.desc}}">{{item.desc}}</text>
+        <view class="upload-grid readonly" wx:if="{{item.images.length}}">
+          <image
+            wx:for="{{item.images}}"
+            wx:for-item="img"
+            wx:for-index="imgIndex"
+            wx:key="path"
+            class="upload-thumb previewable"
+            src="{{img.path}}"
+            mode="aspectFill"
+            bindtap="previewSavedIssueImage"
+            data-index="{{index}}"
+            data-img-index="{{imgIndex}}"
+          />
+        </view>
+        <view wx:if="{{item.attachments.length}}" class="attachment-list">
+          <view
+            wx:for="{{item.attachments}}"
+            wx:for-item="att"
+            wx:for-index="attIndex"
+            wx:key="name"
+            class="attachment-item playable"
+            bindtap="playSavedIssueAttachment"
+            data-index="{{index}}"
+            data-att-index="{{attIndex}}"
+          >
+            <text class="attachment-icon">📎</text>
+            <text class="attachment-label">{{att.label || att.name}}</text>
+            <text wx:if="{{att.durationSec}}" class="attachment-duration">{{att.durationSec}}″</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:elif="{{subtask.result === '异常'}}" class="issue-block">
+      <text class="issue-label">巡检问题</text>
+      <text wx:if="{{subtask.issueDesc}}" class="issue-text">{{subtask.issueDesc}}</text>
+    </view>
+  </view>
+
+  <view class="card loading-card" wx:if="{{loading}}">
+    <text>系统正在执行 AI 智能分析…</text>
+  </view>
+</view>

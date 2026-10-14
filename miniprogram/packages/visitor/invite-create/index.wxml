@@ -1,0 +1,287 @@
+<!-- 快速邀约：字段对齐员工端（仅访客姓名、手机号码；被访组织默认所属组织） -->
+<view class="invite-page" wx:if="{{mode === '快速'}}">
+  <view class="nav-subtitle">只需两项信息</view>
+  <scroll-view class="page-scroll" scroll-y>
+    <view class="quick-hero">
+      <text class="quick-number">01</text>
+      <view class="quick-line"></view>
+      <view class="quick-hero-copy">
+        <text class="quick-eyebrow">ONE-MINUTE INVITE</text>
+        <view class="quick-title">
+          <text>先发出邀请，</text>
+          <text>访客稍后完善。</text>
+        </view>
+        <text class="quick-desc">被访组织默认你的所属组织。访客应邀补全普通邀约启用字段与同行人，完成后由你复核审批。</text>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <view class="field">
+        <text class="field-label">访客姓名 <text class="req">*</text></text>
+        <input
+          class="field-control"
+          placeholder="请输入访客真实姓名"
+          value="{{form.name}}"
+          bindinput="onInput"
+          data-field="name"
+        />
+      </view>
+
+      <view class="field">
+        <text class="field-label">手机号码 <text class="req">*</text></text>
+        <input
+          class="field-control"
+          type="number"
+          maxlength="11"
+          placeholder="请输入11位手机号"
+          value="{{form.phone}}"
+          bindinput="onInput"
+          data-field="phone"
+        />
+        <text class="field-note-danger">重要：该号码用于接收邀约短信，访客需点开短链完善信息，请务必填写正确。</text>
+      </view>
+
+      <view class="invite-preview">
+        <view class="preview-symbol">信</view>
+        <view class="preview-body">
+          <text class="preview-title">邀请发送预览</text>
+          <text class="preview-text">“{{previewText}}”</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="flow-note">
+      <view class="flow-item done">
+        <view class="flow-dot">1</view>
+        <view class="flow-copy">
+          <text class="flow-title">员工发出邀请</text>
+          <text class="flow-sub">填写姓名、手机号</text>
+        </view>
+      </view>
+      <view class="flow-item">
+        <view class="flow-dot">2</view>
+        <view class="flow-copy">
+          <text class="flow-title">访客完善信息</text>
+          <text class="flow-sub">应邀补全信息与同行人</text>
+        </view>
+      </view>
+      <view class="flow-item">
+        <view class="flow-dot">3</view>
+        <view class="flow-copy">
+          <text class="flow-title">员工复核审批</text>
+          <text class="flow-sub">发起人通过后完成</text>
+        </view>
+      </view>
+    </view>
+    <view class="scroll-spacer"></view>
+  </scroll-view>
+
+  <view class="form-dock">
+    <button class="btn-primary wide" loading="{{submitting}}" bindtap="onSubmitQuick">发出邀约</button>
+  </view>
+</view>
+
+<!-- 普通邀约 -->
+<view class="invite-page" wx:else>
+  <view class="nav-subtitle">完整填写后直接生效，无需审批、无需访客应邀</view>
+
+  <scroll-view class="page-scroll" scroll-y>
+    <view class="form-progress">
+      <view class="progress-item {{formStep === 1 ? 'active' : ''}} {{formStep > 1 ? 'done' : ''}}">
+        <view class="progress-dot">{{formStep > 1 ? '✓' : '1'}}</view>
+        <text class="progress-label">到访安排</text>
+      </view>
+      <view class="progress-item {{formStep === 2 ? 'active' : ''}} {{formStep > 2 ? 'done' : ''}}">
+        <view class="progress-dot">{{formStep > 2 ? '✓' : '2'}}</view>
+        <text class="progress-label">访客资料</text>
+      </view>
+      <view class="progress-item {{formStep === 3 ? 'active' : ''}} {{formStep > 3 ? 'done' : ''}}">
+        <view class="progress-dot">{{formStep > 3 ? '✓' : '3'}}</view>
+        <text class="progress-label">访问详情</text>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <view class="form-section-title">
+        <text class="section-no">{{stepMeta.no}}</text>
+        <text>{{stepMeta.title}}</text>
+      </view>
+
+      <!-- Step 1: 到访安排（字段顺序对齐员工端：组织 → 被访人 → 开始 → 结束） -->
+      <block wx:if="{{formStep === 1}}">
+        <view class="field">
+          <text class="field-label">被访组织 <text class="req">*</text></text>
+          <picker mode="selector" range="{{orgNames}}" value="{{orgIndex}}" bindchange="onOrgChange">
+            <view class="field-control {{orgNames[orgIndex] ? '' : 'is-placeholder'}}">
+              {{orgNames[orgIndex] || '请选择被访组织'}}
+            </view>
+          </picker>
+        </view>
+
+        <view class="field">
+          <text class="field-label">被访人</text>
+          <input
+            class="field-control"
+            placeholder="选填，请输入被访人姓名"
+            value="{{form.host}}"
+            bindinput="onInput"
+            data-field="host"
+          />
+        </view>
+
+        <view class="field">
+          <text class="field-label">访问开始 <text class="req">*</text></text>
+          <view class="datetime-row">
+            <picker mode="date" value="{{form.visitDate}}" bindchange="onDateChange" data-field="visitDate">
+              <view class="field-control datetime-half {{form.visitDate ? '' : 'is-placeholder'}}">
+                {{form.visitDate || '选择日期'}}
+              </view>
+            </picker>
+            <picker mode="time" value="{{form.startTime}}" bindchange="onTimeChange" data-field="startTime">
+              <view class="field-control datetime-half {{form.startTime ? '' : 'is-placeholder'}}">
+                {{form.startTime || '选择时间'}}
+              </view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="field">
+          <text class="field-label">访问结束 <text class="req">*</text></text>
+          <view class="datetime-row">
+            <picker mode="date" value="{{form.endDate}}" bindchange="onDateChange" data-field="endDate">
+              <view class="field-control datetime-half {{form.endDate ? '' : 'is-placeholder'}}">
+                {{form.endDate || '选择日期'}}
+              </view>
+            </picker>
+            <picker mode="time" value="{{form.endTime}}" bindchange="onTimeChange" data-field="endTime">
+              <view class="field-control datetime-half {{form.endTime ? '' : 'is-placeholder'}}">
+                {{form.endTime || '选择时间'}}
+              </view>
+            </picker>
+          </view>
+        </view>
+      </block>
+
+      <!-- Step 2: 访客资料 -->
+      <block wx:elif="{{formStep === 2}}">
+        <view class="companion-section">
+          <view class="companion-header">
+            <text>访客</text>
+          </view>
+          <view class="field">
+            <text class="field-label">访客姓名 <text class="req">*</text></text>
+            <input
+              class="field-control"
+              placeholder="请输入访客真实姓名"
+              value="{{form.name}}"
+              bindinput="onInput"
+              data-field="name"
+            />
+          </view>
+          <view class="field">
+            <text class="field-label">证件号 <text class="req">*</text></text>
+            <input
+              class="field-control"
+              placeholder="请输入身份证号"
+              value="{{form.idCard}}"
+              bindinput="onInput"
+              data-field="idCard"
+            />
+          </view>
+          <view class="field">
+            <text class="field-label">手机号 <text class="req">*</text></text>
+            <input
+              class="field-control"
+              type="number"
+              maxlength="11"
+              placeholder="请输入11位手机号"
+              value="{{form.phone}}"
+              bindinput="onInput"
+              data-field="phone"
+            />
+            <text class="field-note-danger">重要：该号码用于接收通行凭证短信，提交后将发送短链，请务必填写正确。</text>
+          </view>
+        </view>
+
+        <view class="companion-section">
+          <view class="companion-header">
+            <view class="companion-header-left">
+              <text>同行人</text>
+              <text class="field-group-tag">选填</text>
+            </view>
+            <view class="ghost-sm" bindtap="onAddCompanion">+ 添加同行人</view>
+          </view>
+
+          <block wx:if="{{companions.length}}">
+            <view class="person-card" wx:for="{{companions}}" wx:key="index">
+              <view class="person-card-head">
+                <text>同行人 {{index + 1}}</text>
+                <text class="person-card-del" data-index="{{index}}" bindtap="onRemoveCompanion">删除</text>
+              </view>
+              <view class="field">
+                <text class="field-label">姓名 <text class="req">*</text></text>
+                <input
+                  class="field-control"
+                  placeholder="真实姓名"
+                  value="{{item.name}}"
+                  data-index="{{index}}"
+                  data-field="name"
+                  bindinput="onCompanionInput"
+                />
+              </view>
+              <view class="field">
+                <text class="field-label">手机号 <text class="req">*</text></text>
+                <input
+                  class="field-control"
+                  type="number"
+                  maxlength="11"
+                  placeholder="11 位手机号"
+                  value="{{item.phone}}"
+                  data-index="{{index}}"
+                  data-field="phone"
+                  bindinput="onCompanionInput"
+                />
+              </view>
+              <view class="field">
+                <text class="field-label">证件号 <text class="req">*</text></text>
+                <input
+                  class="field-control"
+                  placeholder="请输入身份证号"
+                  value="{{item.idCard}}"
+                  data-index="{{index}}"
+                  data-field="idCard"
+                  bindinput="onCompanionInput"
+                />
+              </view>
+            </view>
+          </block>
+          <view class="companion-empty" wx:else>
+            暂无同行人。邀请多人一起到访时，1 人填访客，其余添加为同行人。
+          </view>
+        </view>
+      </block>
+
+      <!-- Step 3: 访问详情 -->
+      <block wx:else>
+        <view class="field">
+          <text class="field-label">来访事由</text>
+          <textarea
+            class="field-control field-textarea"
+            placeholder="请简要说明来访目的"
+            value="{{form.reason}}"
+            bindinput="onInput"
+            data-field="reason"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+      </block>
+    </view>
+    <view class="scroll-spacer"></view>
+  </scroll-view>
+
+  <view class="form-dock split">
+    <button class="btn-secondary" bindtap="onSecondaryAction">{{secondaryLabel}}</button>
+    <button class="btn-primary" loading="{{submitting}}" bindtap="onPrimaryAction">{{primaryLabel}}</button>
+  </view>
+</view>

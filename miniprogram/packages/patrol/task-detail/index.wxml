@@ -1,0 +1,98 @@
+<view class="container {{task.hasManageActions ? 'with-action-bar' : ''}}" wx:if="{{task}}">
+  <view class="card">
+    <view class="card-title">任务信息</view>
+    <view class="info-row"><text class="info-label">任务编号</text><text class="info-value">{{task.taskId}}</text></view>
+    <view class="info-row"><text class="info-label">计划名称</text><text class="info-value">{{task.planName}}</text></view>
+    <view class="info-row"><text class="info-label">计划编号</text><text class="info-value">{{task.planCode}}</text></view>
+    <view class="info-row"><text class="info-label">巡检对象</text><text class="info-value">{{task.objectName}}</text></view>
+    <view class="info-row"><text class="info-label">可执行人</text><text class="info-value">{{task.executorName}}</text></view>
+    <view class="info-row"><text class="info-label">任务开始时间</text><text class="info-value">{{task.scheduled}}</text></view>
+    <view class="info-row"><text class="info-label">任务完成时间</text><text class="info-value">{{task.completedAt || '—'}}</text></view>
+    <view class="info-row"><text class="info-label">巡检项进度</text><text class="info-value">{{task.progress.done}}/{{task.progress.total}}</text></view>
+    <view class="info-row"><text class="info-label">状态</text><text class="tag {{task.statusClass}}">{{task.status}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">巡检项</view>
+    <view wx:for="{{task.subtasks}}" wx:key="code" class="subtask-row">
+      <view class="subtask-main">
+        <view class="subtask-head">
+          <text class="subtask-code">{{item.code}}</text>
+          <text class="tag {{item.methodClass}}">{{item.method}}</text>
+        </view>
+        <text class="subtask-name">{{item.itemName}}</text>
+        <text class="subtask-meta">巡检项 {{item.itemId}} · 问题处理人 {{item.issueHandlerName}}</text>
+        <text class="subtask-meta" wx:if="{{item.completedByName && item.completedByName !== '—'}}">实际执行人 {{item.completedByName}}</text>
+        <view class="subtask-status-row">
+          <text class="tag {{item.statusClass}}">{{item.status}}</text>
+          <text class="subtask-meta" wx:if="{{item.completedAt}}">完成 {{item.completedAt}}</text>
+        </view>
+        <text class="subtask-meta" wx:if="{{item.result}}">检查结果：{{item.result}}</text>
+      </view>
+      <view class="subtask-actions">
+        <button
+          wx:if="{{item.action.type === 'exec'}}"
+          size="mini"
+          class="btn-primary action-btn"
+          bindtap="openSubtask"
+          data-code="{{item.code}}"
+          data-method="{{item.method}}"
+          data-mode="exec"
+        >去执行</button>
+        <text wx:elif="{{item.action.type === 'hint'}}" class="subtask-meta exec-hint">{{item.action.label}}</text>
+        <button
+          wx:if="{{item.action.type === 'view'}}"
+          size="mini"
+          class="action-btn view-btn"
+          bindtap="openSubtask"
+          data-code="{{item.code}}"
+          data-method="{{item.method}}"
+          data-mode="view"
+        >{{item.action.label}}</button>
+      </view>
+    </view>
+    <view wx:if="{{!task.subtasks.length}}" class="empty">暂无巡检项</view>
+  </view>
+</view>
+
+<view wx:if="{{task && task.hasManageActions}}" class="detail-action-bar">
+  <text wx:if="{{task.canUrge}}" class="action-btn" bindtap="onUrge">催办</text>
+  <text wx:if="{{task.canUrge && task.canReassign}}" class="action-sep">|</text>
+  <text wx:if="{{task.canReassign}}" class="action-btn emphasis" bindtap="openReassign">转派</text>
+</view>
+
+<view wx:if="{{showReassign}}" class="reassign-mask" catchtouchmove="preventClose" bindtap="closeReassign">
+  <view class="reassign-panel" catchtap="preventClose">
+    <view class="reassign-hd">
+      <text class="reassign-title">转派巡检任务</text>
+      <text class="reassign-close" bindtap="closeReassign">关闭</text>
+    </view>
+    <text class="reassign-hint">{{reassignHint}}</text>
+    <view class="reassign-row">
+      <text class="reassign-label">任务编号</text>
+      <text class="reassign-value">{{task.taskId}}</text>
+    </view>
+    <view class="reassign-row">
+      <text class="reassign-label">计划名称</text>
+      <text class="reassign-value">{{task.planName}}</text>
+    </view>
+    <view class="reassign-row">
+      <text class="reassign-label">当前执行人</text>
+      <text class="reassign-value">{{task.executorName}}</text>
+    </view>
+    <view class="reassign-row">
+      <text class="reassign-label">巡检进度</text>
+      <text class="reassign-value">{{task.progress.done}}/{{task.progress.total}}</text>
+    </view>
+    <view class="reassign-field">
+      <text class="reassign-label">新执行人</text>
+      <picker mode="selector" range="{{candidateList}}" range-key="label" value="{{candidateIndex}}" bindchange="onCandidatePick">
+        <view class="reassign-picker {{candidateList[candidateIndex].id ? '' : 'placeholder'}}">{{candidateList[candidateIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="reassign-actions">
+      <button class="btn-cancel" bindtap="closeReassign" disabled="{{submitting}}">取消</button>
+      <button class="btn-primary btn-confirm" bindtap="confirmReassign" loading="{{submitting}}" disabled="{{submitting}}">保存</button>
+    </view>
+  </view>
+</view>

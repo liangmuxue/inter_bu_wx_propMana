@@ -1,0 +1,192 @@
+<view class="container" wx:if="{{point}}">
+  <view class="card">
+    <view class="card-title">{{point.name}}</view>
+    <view class="info-row"><text class="info-label">巡更点编号</text><text class="info-value">{{point.id}}</text></view>
+    <view class="info-row"><text class="info-label">打卡类型</text><text class="info-value">{{point.type}}</text></view>
+    <view class="info-row"><text class="info-label">位置</text><text class="info-value">{{point.location}}</text></view>
+    <view class="info-row" wx:if="{{point.deviceId}}"><text class="info-label">关联设备</text><text class="info-value">{{point.deviceId}}</text></view>
+  </view>
+
+  <view class="card standard-panel">
+    <view class="standard-label">检查标准</view>
+    <text class="standard-text">{{standard}}</text>
+    <block wx:if="{{refImage}}">
+      <text class="ref-image-label">参考图片</text>
+      <view class="ref-image-stage tone-{{refImage.tone}}">
+        <view class="ref-image-placeholder">
+          <text class="ref-image-icon">图</text>
+          <text class="ref-image-name">{{refImage.itemName}}</text>
+          <text class="ref-image-code">{{refImage.itemId}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="card" wx:if="{{!viewOnly}}">
+    <view class="card-title">{{reinspectMode ? '复检打卡验证' : '打卡验证'}}</view>
+    <text class="hint-text" wx:if="{{!reinspectMode}}">{{checkinHint}}</text>
+    <button wx:if="{{checkinMode === 'qrcode'}}" class="scan-btn" bindtap="scanCode">扫描二维码</button>
+    <button wx:if="{{checkinMode === 'nfc'}}" class="scan-btn" bindtap="scanNfc">扫描 NFC 标签</button>
+    <button wx:if="{{checkinMode === 'access'}}" class="scan-btn" bindtap="accessCheckin">门禁打卡确认</button>
+    <text class="verify-status {{verified ? 'ok' : ''}}">{{verified ? '已验证通过' : '请先完成打卡验证'}}</text>
+  </view>
+
+  <view class="card result-panel" wx:if="{{!viewOnly && reinspectMode && reinspectIsLastPoint && !reinspectTempReport}}">
+    <view class="card-title">复检结果</view>
+    <view class="field-label req">复检结果</view>
+    <picker mode="selector" range="{{reinspectResultOptions}}" value="{{reinspectResultIndex}}" bindchange="onReinspectResultPick">
+      <view class="filter-picker">{{reinspectResultOptions[reinspectResultIndex]}}</view>
+    </picker>
+    <view class="field-label">复检说明</view>
+    <textarea
+      class="textarea"
+      placeholder="选填，不合格时请说明原因"
+      maxlength="500"
+      value="{{reinspectRemark}}"
+      bindinput="onReinspectRemarkInput"
+    />
+    <view class="field-label">复检附件</view>
+    <text class="field-hint">选填，可上传图片或视频</text>
+    <view class="upload-grid">
+      <view wx:for="{{reinspectAttachments}}" wx:key="path" class="upload-item">
+        <image wx:if="{{item.type === 'image'}}" class="upload-thumb" src="{{item.path}}" mode="aspectFill" />
+        <view wx:else class="upload-thumb video-thumb">视频</view>
+        <text class="upload-remove" bindtap="removeReinspectAttachment" data-index="{{index}}">×</text>
+      </view>
+      <view class="upload-add" bindtap="chooseReinspectAttachments">
+        <text class="upload-add-icon">+</text>
+        <text class="upload-add-text">上传</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card result-panel" wx:if="{{viewOnly && savedResult}}">
+    <view class="card-title">巡检结果</view>
+    <view class="info-row"><text class="info-label">打卡时间</text><text class="info-value">{{checkinAt || '—'}}</text></view>
+    <view class="info-row" wx:if="{{pointActorName}}"><text class="info-label">打卡人</text><text class="info-value">{{pointActorName}}</text></view>
+    <view class="info-row"><text class="info-label">巡检结果</text><text class="info-value">{{savedResult.result || '—'}}</text></view>
+    <view class="info-row"><text class="info-label">备注说明</text><text class="info-value">{{savedResult.remark || '—'}}</text></view>
+    <view wx:if="{{savedResult.result === '异常' && savedIssues.length}}" class="issues-readonly">
+      <text class="issues-head-title">关联问题</text>
+      <view wx:for="{{savedIssues}}" wx:key="id" class="issue-read-card">
+        <text class="issue-read-title">问题 {{index + 1}}</text>
+        <text class="issue-read-desc" wx:if="{{item.desc}}">{{item.desc}}</text>
+        <view
+          wx:if="{{item.issueDescVoice}}"
+          class="voice-preview playable {{voicePlayingIndex === index ? 'playing' : ''}}"
+          bindtap="playSavedVoice"
+          data-index="{{index}}"
+        >
+          <text class="voice-play">{{voicePlayingIndex === index ? '❚❚' : '▶'}}</text>
+          <text class="voice-meta">语音 {{item.issueDescVoice.durationSec}}″</text>
+        </view>
+        <view class="upload-grid readonly" wx:if="{{item.images.length}}">
+          <image
+            wx:for="{{item.images}}"
+            wx:for-item="img"
+            wx:for-index="imgIndex"
+            wx:key="path"
+            class="upload-thumb previewable"
+            src="{{img.path || img.previewUrl}}"
+            mode="aspectFill"
+            bindtap="previewSavedIssueImage"
+            data-index="{{index}}"
+            data-img-index="{{imgIndex}}"
+          />
+        </view>
+        <view wx:if="{{item.attachments.length}}" class="attachment-list">
+          <view
+            wx:for="{{item.attachments}}"
+            wx:for-item="att"
+            wx:for-index="attIndex"
+            wx:key="name"
+            class="attachment-item playable"
+            bindtap="playSavedIssueAttachment"
+            data-index="{{index}}"
+            data-att-index="{{attIndex}}"
+          >
+            <text class="attachment-icon">📎</text>
+            <text class="attachment-label">{{att.label || att.name}}</text>
+            <text wx:if="{{att.durationSec}}" class="attachment-duration">{{att.durationSec}}″</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card result-panel" wx:if="{{!viewOnly && !reinspectMode}}">
+    <view class="card-title">巡检结果</view>
+    <radio-group bindchange="onResultChange">
+      <label class="radio-row"><radio value="正常" checked="{{result==='正常'}}" />正常</label>
+      <label class="radio-row"><radio value="异常" checked="{{result==='异常'}}" />异常</label>
+    </radio-group>
+    <view class="field-label">备注说明</view>
+    <textarea class="textarea" placeholder="选填，补充巡检情况" value="{{remark}}" bindinput="onRemarkInput" maxlength="500" />
+
+    <block wx:if="{{result==='异常'}}">
+      <view class="issues-editor">
+        <view class="issues-editor-head">
+          <text class="issues-head-title">巡更点问题</text>
+          <text class="issues-head-hint">可提交多个问题；须文字或语音描述，图片与视频附件选填</text>
+        </view>
+        <view wx:for="{{issues}}" wx:key="id" class="issue-edit-card">
+          <view class="issue-edit-head">
+            <text class="issue-edit-title">问题 {{index + 1}}</text>
+            <text wx:if="{{index > 0}}" class="issue-remove" bindtap="removeIssue" data-index="{{index}}">删除</text>
+          </view>
+          <view class="field-label req">问题描述</view>
+          <textarea class="textarea" placeholder="可补充文字描述，或先点击语音录入" value="{{item.desc}}" bindinput="onIssueDescInput" data-index="{{index}}" maxlength="500" />
+          <view class="issue-tools">
+            <button class="tool-btn {{recordingIssueIndex === index ? 'recording' : ''}}" bindtap="toggleVoiceRecord" data-index="{{index}}">
+              {{recordingIssueIndex === index ? '停止录音' : '语音录入'}}
+            </button>
+          </view>
+          <view wx:if="{{item.issueDescVoice}}" class="voice-preview playable {{voicePlayingIndex === index ? 'playing' : ''}}">
+            <view class="voice-preview-main" bindtap="playVoice" data-index="{{index}}">
+              <text class="voice-play">{{voicePlayingIndex === index ? '❚❚' : '▶'}}</text>
+              <text class="voice-meta">语音 {{item.issueDescVoice.durationSec}}″</text>
+            </view>
+            <text class="voice-remove" bindtap="removeVoice" data-index="{{index}}">删除</text>
+          </view>
+          <view class="field-label">问题图片</view>
+          <text class="field-hint">选填，最多 {{maxImages}} 张</text>
+          <view class="upload-grid">
+            <view wx:if="{{item.images.length < maxImages}}" class="upload-add" bindtap="chooseIssueImages" data-index="{{index}}">
+              <text class="upload-add-icon">+</text>
+              <text class="upload-add-text">上传图片</text>
+            </view>
+            <view wx:for="{{item.images}}" wx:for-item="img" wx:for-index="imgIndex" wx:key="path" class="upload-item">
+              <image class="upload-thumb previewable" src="{{img.path}}" mode="aspectFill" bindtap="previewIssueImage" data-index="{{index}}" data-img-index="{{imgIndex}}" />
+              <text class="upload-remove" bindtap="removeIssueImage" data-index="{{index}}" data-img-index="{{imgIndex}}">×</text>
+            </view>
+          </view>
+          <view class="field-label">问题附件</view>
+          <text class="field-hint">选填，可上传多个视频文件</text>
+          <view class="attachment-actions">
+            <button class="tool-btn secondary" bindtap="chooseIssueAttachments" data-index="{{index}}">上传视频</button>
+          </view>
+          <view wx:if="{{item.attachments.length}}" class="attachment-list editable">
+            <view wx:for="{{item.attachments}}" wx:for-item="att" wx:for-index="attIndex" wx:key="path" class="attachment-row">
+              <text
+                class="attachment-name playable"
+                bindtap="playIssueAttachment"
+                data-index="{{index}}"
+                data-att-index="{{attIndex}}"
+              >📎 {{att.label || att.name}}</text>
+              <text class="attachment-remove" bindtap="removeIssueAttachment" data-index="{{index}}" data-att-index="{{attIndex}}">删除</text>
+            </view>
+          </view>
+        </view>
+        <button class="add-issue-btn" bindtap="addIssue">+ 添加问题</button>
+      </view>
+    </block>
+  </view>
+
+  <button
+    wx:if="{{!viewOnly}}"
+    class="btn-primary submit-btn"
+    bindtap="submit"
+    loading="{{submitting}}"
+    disabled="{{submitting || !verified || (reinspectMode && reinspectIsLastPoint && !reinspectTempReport && reinspectResultIndex <= 0)}}"
+  >{{reinspectMode ? (reinspectTempReport || !reinspectIsLastPoint ? '完成打卡复检' : '提交复检') : '打卡并提交'}}</button>
+</view>

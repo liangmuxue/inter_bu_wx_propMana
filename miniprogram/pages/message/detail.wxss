@@ -1,0 +1,56 @@
+.container { padding: 24rpx 32rpx 48rpx; }
+
+.detail-card { padding: 28rpx; }
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.type-tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  border-radius: 999rpx;
+}
+
+.type-task_remind { color: #1A5FDB; background: #EBF4FF; }
+.type-task_urge { color: #C05621; background: #FEEBC8; }
+.type-task_overdue { color: #C53030; background: #FED7D7; }
+.type-workorder_remind { color: #C05621; background: #FEEBC8; }
+
+.detail-time {
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+}
+
+.detail-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.detail-meta {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 24rpx;
+}
+
+.detail-body {
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.action-btn { margin-top: 32rpx; }
+
+.empty {
+  padding: 80rpx 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}

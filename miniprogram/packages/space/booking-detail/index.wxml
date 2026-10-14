@@ -1,0 +1,73 @@
+<view class="space-booking-detail-page" wx:if="{{detail}}">
+
+  <view class="space-booking-detail-hero {{detail.heroTone}}">
+
+    <view class="space-booking-detail-hero-top">
+
+      <text class="status-tag {{detail.statusClass}}">{{detail.statusLabel}}</text>
+
+      <text class="space-booking-detail-code">{{detail.code || detail.id}}</text>
+
+    </view>
+
+    <text class="space-booking-detail-subject">{{detail.subject || '未命名会议'}}</text>
+
+    <text class="space-booking-detail-room">{{detail.roomLine}}</text>
+
+    <view class="space-booking-detail-facilities" wx:if="{{detail.facilities.length}}">
+
+      <text wx:for="{{detail.facilities}}" wx:key="*this" class="space-facility-tag">{{item}}</text>
+
+    </view>
+
+    <view class="space-booking-detail-when">
+
+      <view class="when-block">
+
+        <text class="when-label">会议日期</text>
+
+        <text class="when-value">{{detail.dateText}}</text>
+
+      </view>
+
+      <view class="when-block">
+
+        <text class="when-label">会议时间</text>
+
+        <text class="when-value">{{detail.timeText}}</text>
+
+      </view>
+
+    </view>
+
+  </view>
+
+
+
+  <view class="space-booking-detail-card">
+
+    <text class="detail-title">会议信息</text>
+
+    <view wx:for="{{detail.infoRows}}" wx:key="label" class="detail-row">
+
+      <text class="detail-dt">{{item.label}}</text>
+
+      <view class="detail-dd">
+
+        <text wx:if="{{!item.isStatus}}">{{item.value}}</text>
+
+        <text wx:else class="status-tag {{detail.statusClass}}">{{detail.statusLabel}}</text>
+
+      </view>
+
+    </view>
+
+  </view>
+
+</view>
+
+
+
+<view wx:if="{{!loading && !detail}}" class="space-empty page-empty">预约不存在或无权查看</view>
+
+

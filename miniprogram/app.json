@@ -1,0 +1,150 @@
+{
+  "pages": [
+    "pages/workbench/index",
+    "pages/todo/index",
+    "pages/message/index",
+    "pages/message/detail",
+    "pages/mine/index",
+    "pages/mine/change-password",
+    "pages/login/index"
+  ],
+  "subPackages": [
+    {
+      "root": "packages/patrol",
+      "name": "patrol",
+      "pages": [
+        "task-list/index",
+        "task-detail/index",
+        "subtask-onsite/index",
+        "guard-scan/index",
+        "subtask-remote/index",
+        "remote-monitor-fullscreen/index",
+        "subtask-auto/index",
+        "video-preview/index",
+        "issue-list/index",
+        "issue-detail/index",
+        "issue-report/index",
+        "issue-rectify/index",
+        "issue-reinspect-onsite/index",
+        "schedule/index"
+      ]
+    },
+    {
+      "root": "packages/fire",
+      "name": "fire",
+      "pages": [
+        "alarm-list/index",
+        "device-list/index",
+        "stats/index"
+      ]
+    },
+    {
+      "root": "packages/visitor",
+      "name": "visitor",
+      "pages": [
+        "visitor-list/index",
+        "appointment-list/index",
+        "invite-list/index",
+        "invite-create/index",
+        "flow-detail/index",
+        "passage-list/index",
+        "visitor-detail/index",
+        "verify-result/index"
+      ]
+    },
+    {
+      "root": "packages/workorder",
+      "name": "workorder",
+      "pages": [
+        "list/index",
+        "detail/index",
+        "action/index"
+      ]
+    },
+    {
+      "root": "packages/space",
+      "name": "space",
+      "pages": [
+        "board/index",
+        "room-detail/index",
+        "record-list/index",
+        "booking-detail/index",
+        "fee-stats/index"
+      ]
+    },
+    {
+      "root": "packages/device",
+      "name": "device",
+      "pages": [
+        "inventory-list/index",
+        "inventory-execute/index",
+        "inventory-surplus/index",
+        "inventory-detail/index",
+        "inventory-report/index",
+        "repair-create/index",
+        "repair-list/index",
+        "repair-detail/index",
+        "repair-approve/index",
+        "repair-workorder-list/index",
+        "repair-workorder-detail/index",
+        "repair-workorder-transfer/index",
+        "repair-workorder-finish/index",
+        "repair-workorder-acceptance/index",
+        "spare-list/index",
+        "spare-create/index",
+        "spare-detail/index",
+        "spare-approve/index",
+        "spare-material/index",
+        "asset-detail/index"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1A5FDB",
+    "navigationBarTitleText": "智慧运维",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F7FA",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#718096",
+    "selectedColor": "#1A5FDB",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/workbench/index",
+        "text": "工作台",
+        "iconPath": "assets/icons/workbench.png",
+        "selectedIconPath": "assets/icons/workbench-active.png"
+      },
+      {
+        "pagePath": "pages/todo/index",
+        "text": "待办",
+        "iconPath": "assets/icons/todo.png",
+        "selectedIconPath": "assets/icons/todo-active.png"
+      },
+      {
+        "pagePath": "pages/message/index",
+        "text": "消息",
+        "iconPath": "assets/icons/message.png",
+        "selectedIconPath": "assets/icons/message-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "assets/icons/mine.png",
+        "selectedIconPath": "assets/icons/mine-active.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于巡更打卡位置校验"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+  "sitemapLocation": "sitemap.json"
+}

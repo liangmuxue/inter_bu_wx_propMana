@@ -1,0 +1,123 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 24rpx 32rpx calc(48rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.hero-code {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+
+.hero-name {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.hero-meta {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #F0F2F5;
+}
+
+.kv-row:last-child {
+  border-bottom: none;
+}
+
+.kv-label {
+  flex-shrink: 0;
+  width: 160rpx;
+  font-size: 26rpx;
+  color: #718096;
+}
+
+.kv-value {
+  flex: 1;
+  text-align: right;
+  font-size: 26rpx;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.stock-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.stock-card {
+  flex: 1;
+  padding: 20rpx 12rpx;
+  border-radius: var(--radius);
+  text-align: center;
+  background: #F7FAFC;
+}
+
+.stock-card.available {
+  background: #EBF8FF;
+}
+
+.stock-card.frozen {
+  background: #FFFAF0;
+}
+
+.stock-card.total {
+  background: #F0FFF4;
+}
+
+.stock-label {
+  display: block;
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 8rpx;
+}
+
+.stock-value {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.desc-box {
+  margin-bottom: 8rpx;
+  padding: 16rpx 20rpx;
+  background: #F7FAFC;
+  border-radius: var(--radius);
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.empty {
+  padding: 120rpx 24rpx;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 26rpx;
+}

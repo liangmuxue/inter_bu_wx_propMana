@@ -1,0 +1,54 @@
+<view class="page" wx:if="{{usage}}">
+  <view class="notice card">
+    <text class="notice-text">请核对以下领用申请信息并完成派发审批</text>
+  </view>
+
+  <view class="card">
+    <view class="section-title">申请信息</view>
+    <view class="kv-row"><text class="kv-label">申请单号</text><text class="kv-value">{{usage.code}}</text></view>
+    <view class="kv-row"><text class="kv-label">申请时间</text><text class="kv-value">{{usage.createdAt || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">物料编码</text><text class="kv-value">{{usage.spareCode}}</text></view>
+    <view class="kv-row"><text class="kv-label">物料名称</text><text class="kv-value">{{usage.spareName}}</text></view>
+    <view class="kv-row"><text class="kv-label">领用数量</text><text class="kv-value accent">{{usage.qtyText}}</text></view>
+    <view class="kv-row"><text class="kv-label">申请人</text><text class="kv-value">{{usage.applicantDisplay}}</text></view>
+    <view class="kv-row"><text class="kv-label">领用组织</text><text class="kv-value">{{usage.useOrgNameText}}</text></view>
+    <view class="kv-row"><text class="kv-label">领用区域</text><text class="kv-value">{{usage.useRegionNameText}}</text></view>
+    <view class="remark-label">申请备注</view>
+    <view class="desc-box">{{usage.remarkText}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">审批操作</view>
+    <text class="form-label">审批结果 <text class="req">*</text></text>
+    <radio-group class="result-group" bindchange="onResultChange">
+      <label class="result-option {{auditResult === approvedLabel ? 'active approve' : ''}}">
+        <radio value="{{approvedLabel}}" checked="{{auditResult === approvedLabel}}" color="#1A5FDB" />
+        <view class="result-body">
+          <text class="result-title">{{approvedLabel}}</text>
+          <text class="result-desc">确认派发，完成库存扣减</text>
+        </view>
+      </label>
+      <label class="result-option {{auditResult === rejectedLabel ? 'active reject' : ''}}">
+        <radio value="{{rejectedLabel}}" checked="{{auditResult === rejectedLabel}}" color="#E53E3E" />
+        <view class="result-body">
+          <text class="result-title">{{rejectedLabel}}</text>
+          <text class="result-desc">驳回申请，释放冻结库存</text>
+        </view>
+      </label>
+    </radio-group>
+    <view class="form-field">
+      <text class="form-label">派发审批备注</text>
+      <textarea
+        class="form-textarea"
+        maxlength="200"
+        placeholder="选填，可填写派发说明或驳回原因"
+        value="{{auditRemark}}"
+        bindinput="onRemarkInput"
+      />
+    </view>
+    <button class="btn-submit" bindtap="onSubmit" loading="{{submitting}}">确认</button>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到待审批领用，或无权操作</view>

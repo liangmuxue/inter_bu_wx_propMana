@@ -1,0 +1,477 @@
+.invite-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  box-sizing: border-box;
+}
+
+.nav-subtitle {
+  flex-shrink: 0;
+  padding: 12rpx 32rpx 8rpx;
+  font-size: 24rpx;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  background: #fff;
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.page-scroll {
+  flex: 1;
+  min-height: 0;
+  padding: 24rpx 32rpx 0;
+  box-sizing: border-box;
+}
+
+.scroll-spacer {
+  height: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+/* —— Quick hero —— */
+.quick-hero {
+  min-height: 320rpx;
+  display: flex;
+  gap: 24rpx;
+  padding: 36rpx 28rpx;
+  border-radius: 40rpx;
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 12%, rgba(74, 134, 232, 0.22), transparent 33%),
+    linear-gradient(145deg, #0f2f6b, var(--color-primary));
+  box-sizing: border-box;
+}
+
+.quick-number {
+  flex-shrink: 0;
+  color: #c5dcff;
+  font-size: 22rpx;
+  font-weight: 800;
+  padding-top: 4rpx;
+}
+
+.quick-line {
+  width: 2rpx;
+  flex-shrink: 0;
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.quick-hero-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-eyebrow {
+  color: #c5dcff;
+  font-size: 18rpx;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.quick-title {
+  margin: 14rpx 0;
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+}
+
+.quick-title text {
+  display: block;
+}
+
+.quick-desc {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 22rpx;
+  line-height: 1.65;
+}
+
+/* —— Form card / fields —— */
+.form-card {
+  margin-top: 22rpx;
+  padding: 32rpx;
+  border: 1rpx solid var(--color-border);
+  border-radius: 36rpx;
+  background: #fff;
+  box-shadow: 0 12rpx 40rpx rgba(10, 30, 60, 0.045);
+  box-sizing: border-box;
+}
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin: 4rpx 0 28rpx;
+  color: var(--color-text);
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.section-no {
+  color: var(--color-primary);
+  font-size: 22rpx;
+}
+
+.field {
+  display: block;
+  margin-bottom: 28rpx;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 12rpx;
+  color: var(--color-text-secondary);
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.field-label .req {
+  color: var(--color-danger);
+  font-style: normal;
+}
+
+.field-control {
+  display: block;
+  width: 100%;
+  height: 88rpx;
+  min-height: 88rpx;
+  padding: 0 26rpx;
+  box-sizing: border-box;
+  border: 1rpx solid var(--color-border);
+  border-radius: 24rpx;
+  background: #fff;
+  color: var(--color-text);
+  font-size: 28rpx;
+  line-height: 88rpx;
+}
+
+view.field-control {
+  line-height: 88rpx;
+}
+
+.field-control.is-placeholder {
+  color: #A0AEC0;
+}
+
+.field-textarea {
+  height: auto;
+  min-height: 160rpx;
+  padding: 24rpx 26rpx;
+  line-height: 1.5;
+}
+
+.field-note-danger {
+  display: block;
+  margin-top: 10rpx;
+  color: var(--color-danger);
+  font-size: 22rpx;
+  line-height: 1.45;
+}
+
+.datetime-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.datetime-half {
+  flex: 1;
+  text-align: center;
+}
+
+/* —— Invite preview —— */
+.invite-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  margin-top: 8rpx;
+  padding: 24rpx;
+  border-radius: 28rpx;
+  background: #F7FAFC;
+}
+
+.preview-symbol {
+  width: 56rpx;
+  height: 56rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18rpx;
+  background: #EBF4FF;
+  color: var(--color-primary);
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.preview-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.preview-title {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.preview-text {
+  color: var(--color-text-secondary);
+  font-size: 22rpx;
+  line-height: 1.55;
+}
+
+/* —— Flow note —— */
+.flow-note {
+  margin: 22rpx 8rpx 0;
+}
+
+.flow-item {
+  position: relative;
+  min-height: 88rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.flow-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 44rpx;
+  bottom: 0;
+  left: 20rpx;
+  width: 2rpx;
+  background: var(--color-border);
+}
+
+.flow-dot {
+  z-index: 1;
+  width: 42rpx;
+  height: 42rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.flow-item.done .flow-dot {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.flow-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  padding-top: 4rpx;
+}
+
+.flow-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.flow-sub {
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+}
+
+/* —— Progress —— */
+.form-progress {
+  display: flex;
+  margin: 8rpx 4rpx 8rpx;
+}
+
+.progress-item {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  color: #A0AEC0;
+  font-size: 22rpx;
+}
+
+.progress-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 24rpx;
+  left: calc(50% + 32rpx);
+  width: calc(100% - 64rpx);
+  height: 2rpx;
+  background: var(--color-border);
+}
+
+.progress-dot {
+  z-index: 1;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-bg);
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.progress-label {
+  font-size: 22rpx;
+  line-height: 1.2;
+}
+
+.progress-item.active,
+.progress-item.done {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.progress-item.active .progress-dot,
+.progress-item.done .progress-dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.progress-item.done:not(:last-child)::after {
+  background: var(--color-primary);
+}
+
+/* —— Companions —— */
+.companion-section {
+  margin-top: 28rpx;
+}
+
+.companion-section:first-child {
+  margin-top: 0;
+}
+
+.companion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.companion-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.field-group-tag {
+  margin-left: 10rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #A0AEC0;
+}
+
+.ghost-sm {
+  padding: 8rpx 16rpx;
+  color: var(--color-primary);
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.companion-empty {
+  margin: 0 0 8rpx;
+  padding: 32rpx 16rpx;
+  color: #A0AEC0;
+  font-size: 24rpx;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.person-card {
+  background: #F7FAFC;
+  border-radius: 20rpx;
+  padding: 24rpx 26rpx 8rpx;
+  margin-bottom: 16rpx;
+}
+
+.person-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.person-card-del {
+  color: var(--color-danger);
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+/* —— Footer dock —— */
+.form-dock {
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 32rpx calc(20rpx + env(safe-area-inset-bottom));
+  border-top: 1rpx solid rgba(220, 230, 233, 0.8);
+  background: rgba(255, 255, 255, 0.96);
+  box-sizing: border-box;
+}
+
+.form-dock.split .btn-secondary,
+.form-dock.split .btn-primary {
+  flex: 1;
+}
+
+.form-dock .btn-primary.wide {
+  flex: 1;
+  width: 100%;
+}
+
+.btn-primary,
+.btn-secondary {
+  margin: 0;
+  min-height: 96rpx;
+  padding: 0 28rpx;
+  border: 0;
+  border-radius: 28rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 96rpx;
+}
+
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(145deg, #2a6fe3, var(--color-primary) 55%, #154fc0);
+  box-shadow: 0 16rpx 36rpx rgba(26, 95, 219, 0.28);
+}
+
+.btn-secondary {
+  color: var(--color-text);
+  background: #fff;
+  border: 1rpx solid var(--color-border);
+}
+
+.btn-primary::after,
+.btn-secondary::after {
+  border: none;
+}

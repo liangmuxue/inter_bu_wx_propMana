@@ -1,0 +1,189 @@
+<view class="page">
+  <view class="scope-bar">
+    <view
+      class="scope-item {{scope === 'org' ? 'active' : ''}}"
+      bindtap="onScopeChange"
+      data-scope="org"
+    >资产报修</view>
+    <view
+      class="scope-item {{scope === 'mine' ? 'active' : ''}}"
+      bindtap="onScopeChange"
+      data-scope="mine"
+    >我的报修</view>
+    <view class="filter-trigger {{queryActive ? 'active' : ''}}" bindtap="openFilterPanel">
+      <text class="filter-icon">筛选</text>
+      <text wx:if="{{queryActive}}" class="filter-dot"></text>
+    </view>
+  </view>
+
+  <view class="filter-bar-wrap">
+    <scroll-view scroll-x class="filter-bar" show-scrollbar="{{false}}">
+      <view class="filter-inner">
+        <view
+          wx:for="{{statusFilters}}"
+          wx:key="id"
+          class="filter-item {{status === item.id ? 'active' : ''}}"
+          bindtap="onStatusChange"
+          data-status="{{item.id}}"
+        >{{item.label}}</view>
+        <view class="filter-tail"></view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="query-summary" wx:if="{{queryActive}}">
+    <text>已启用查询筛选</text>
+    <text class="query-reset" bindtap="resetQuery">清除</text>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="container">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="card item-card"
+        bindtap="openDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="item-head">
+          <text class="item-code">{{item.code}}</text>
+          <text class="tag {{item.statusClass}}">{{item.status}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">资产编号</text>
+          <text class="kv-value">{{item.assetCode}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">资产名称</text>
+          <text class="kv-value">{{item.assetName}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">品牌 / 型号</text>
+          <text class="kv-value">{{item.brandText}} / {{item.modelText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">资产分类</text>
+          <text class="kv-value">{{item.categoryNameText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">所属区域</text>
+          <text class="kv-value">{{item.regionNameText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">安装位置</text>
+          <text class="kv-value">{{item.locationText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">报修人</text>
+          <text class="kv-value">{{item.reporterDisplay}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">报修组织</text>
+          <text class="kv-value">{{item.orgNameText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">报修时间</text>
+          <text class="kv-value">{{item.reportTime}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">报修方式</text>
+          <text class="kv-value">{{item.reportMethod}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">故障等级</text>
+          <text class="kv-value"><text class="tag {{item.faultLevelClass}}">{{item.faultLevel}}</text></text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">故障描述</text>
+          <text class="kv-value kv-desc">{{item.faultDescText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">审批人</text>
+          <text class="kv-value">{{item.approverNameText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">审批时间</text>
+          <text class="kv-value">{{item.approveTimeText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">工单编号</text>
+          <text class="kv-value">{{item.workOrderCodeText}}</text>
+        </view>
+        <view class="action-row" wx:if="{{item.hasActions}}" catchtap="preventBubble">
+          <button
+            wx:if="{{item.canView}}"
+            class="action-btn"
+            catchtap="openDetail"
+            data-id="{{item.id}}"
+          >查看</button>
+          <button
+            wx:if="{{item.canApprove}}"
+            class="action-btn primary"
+            catchtap="onApprove"
+            data-id="{{item.id}}"
+          >审批</button>
+          <button
+            wx:if="{{item.canWithdraw}}"
+            class="action-btn danger"
+            catchtap="onWithdraw"
+            data-id="{{item.id}}"
+          >撤回</button>
+          <button
+            wx:if="{{item.canDelete}}"
+            class="action-btn danger"
+            catchtap="onDelete"
+            data-id="{{item.id}}"
+          >删除</button>
+        </view>
+      </view>
+      <view wx:if="{{!loading && !list.length}}" class="empty">暂无报修记录</view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{showFilterPanel}}" class="filter-mask" bindtap="closeFilterPanel" catchtouchmove="preventClose">
+    <view class="filter-panel" catchtap="preventClose" catchtouchmove="preventClose">
+      <view class="filter-panel-hd">
+        <text class="filter-panel-title">查询条件</text>
+        <text class="filter-panel-close" bindtap="closeFilterPanel">关闭</text>
+      </view>
+      <view class="filter-field">
+        <text class="filter-label">故障等级</text>
+        <picker mode="selector" range="{{faultLevelOptions}}" range-key="label" value="{{queryForm.faultLevelIndex}}" bindchange="onFaultLevelPick">
+          <view class="filter-picker">{{faultLevelOptions[queryForm.faultLevelIndex].label}}</view>
+        </picker>
+      </view>
+      <view class="filter-field">
+        <text class="filter-label">报修方式</text>
+        <picker mode="selector" range="{{methodOptions}}" range-key="label" value="{{queryForm.methodIndex}}" bindchange="onMethodPick">
+          <view class="filter-picker">{{methodOptions[queryForm.methodIndex].label}}</view>
+        </picker>
+      </view>
+      <view class="filter-field">
+        <text class="filter-label">关键词</text>
+        <view class="filter-input-wrap">
+          <input
+            class="filter-input"
+            placeholder="报修单号/工单编号/资产/报修人/组织"
+            placeholder-class="filter-input-placeholder"
+            value="{{queryForm.keyword}}"
+            bindinput="onQueryKeywordInput"
+            confirm-type="search"
+            bindconfirm="applyQuery"
+          />
+        </view>
+      </view>
+      <view class="filter-actions">
+        <button class="btn-reset" bindtap="resetQuery">重置</button>
+        <button class="btn-query" bindtap="applyQuery">查询</button>
+      </view>
+    </view>
+  </view>
+</view>

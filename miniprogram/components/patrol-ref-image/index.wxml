@@ -1,0 +1,20 @@
+<view class="ref-image-card {{inline ? 'is-inline' : ''}}" wx:if="{{displayRef}}">
+
+  <view class="ref-image-title">参考图片</view>
+
+  <view class="ref-image-stage tone-{{displayRef.tone}}">
+
+    <view class="ref-image-placeholder">
+
+      <text class="ref-image-icon">图</text>
+
+      <text class="ref-image-name">{{displayRef.itemName}}</text>
+
+      <text class="ref-image-code">{{displayRef.itemId}}</text>
+
+    </view>
+
+  </view>
+
+</view>
+

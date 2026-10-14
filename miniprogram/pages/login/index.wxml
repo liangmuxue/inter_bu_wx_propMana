@@ -1,0 +1,29 @@
+<view class="login-page">
+  <view class="login-logo">智慧运维</view>
+  <view class="login-desc">物业端 · 移动作业</view>
+  <view class="login-card">
+    <view class="form-group">
+      <view class="field-label">账号</view>
+      <input
+        class="field-input"
+        placeholder="请输入平台账号"
+        placeholder-class="field-placeholder"
+        value="{{username}}"
+        bindinput="onUsername"
+      />
+    </view>
+    <view class="form-group">
+      <view class="field-label">密码</view>
+      <input
+        class="field-input"
+        password
+        placeholder="请输入密码"
+        placeholder-class="field-placeholder"
+        value="{{password}}"
+        bindinput="onPassword"
+      />
+    </view>
+    <button class="btn-primary login-btn" loading="{{loading}}" bindtap="onLogin">登录</button>
+  </view>
+  <text class="login-hint">使用与 PC 端相同的平台账号登录</text>
+</view>

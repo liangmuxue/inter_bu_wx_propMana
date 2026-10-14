@@ -1,0 +1,147 @@
+<view class="page" wx:if="{{repair}}">
+  <!-- 同 PC 审批弹窗：hero + 资产信息 + 报修信息 + 故障信息 -->
+  <view class="hero card">
+    <view class="hero-top">
+      <text class="hero-code">{{repair.code}}</text>
+      <view class="hero-tags">
+        <text class="tag {{repair.statusClass}}">{{repair.status}}</text>
+        <text class="tag {{repair.faultLevelClass}}">{{repair.faultLevel}}</text>
+      </view>
+    </view>
+    <text class="hero-name">{{repair.assetName}}</text>
+    <text class="hero-meta">{{repair.reportTime || '—'}}</text>
+    <text class="hero-meta">{{repair.reporterName || '—'}}{{repair.reporterAccount ? '（' + repair.reporterAccount + '）' : ''}}</text>
+    <text class="hero-meta" wx:if="{{repair.orgName}}">{{repair.orgName}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-title">资产信息</view>
+    <view class="kv-row"><text class="kv-label">资产编号</text><text class="kv-value">{{repair.assetCode || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">资产分类</text><text class="kv-value">{{repair.categoryName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">品牌</text><text class="kv-value">{{repair.brand || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">型号</text><text class="kv-value">{{repair.model || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">所属区域</text><text class="kv-value">{{repair.regionName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">安装位置</text><text class="kv-value">{{repair.location || '—'}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">报修信息</view>
+    <view class="kv-row"><text class="kv-label">报修人</text><text class="kv-value">{{repair.reporterDisplay || repair.reporterName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">报修组织</text><text class="kv-value">{{repair.orgName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">报修时间</text><text class="kv-value">{{repair.reportTime || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">报修方式</text><text class="kv-value">{{repair.reportMethod || '—'}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">故障信息</view>
+    <view class="desc-box">{{repair.faultDesc || '—'}}</view>
+    <view class="media-block">
+      <text class="media-label">故障图片</text>
+      <view class="upload-grid" wx:if="{{repair.hasFaultImages}}">
+        <view
+          wx:for="{{repair.faultImages}}"
+          wx:key="path"
+          class="upload-item"
+          bindtap="previewImage"
+          data-index="{{index}}"
+        >
+          <image class="upload-thumb" src="{{item.path || item.url}}" mode="aspectFill" />
+          <text class="upload-tip">点击查看</text>
+        </view>
+      </view>
+      <text class="media-empty" wx:else>无</text>
+    </view>
+    <view class="media-block">
+      <text class="media-label">故障视频</text>
+      <view class="video-entry" wx:if="{{repair.hasVideo}}" bindtap="playVideo">
+        <view class="video-icon">▶</view>
+        <view class="video-info">
+          <text class="video-name">{{repair.videoName}}</text>
+          <text class="video-hint">点击播放</text>
+        </view>
+      </view>
+      <text class="media-empty" wx:else>无</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{step === 'choose'}}">
+    <view class="section-title">审批操作</view>
+    <view class="choose-actions">
+      <button class="btn-pass" bindtap="goPass">审核通过并派单</button>
+      <button class="btn-reject" bindtap="goReject">驳回报修</button>
+    </view>
+  </view>
+
+  <!-- 同 PC：指派维修人（多选必填）+ 审批意见（选填） -->
+  <view class="card" wx:if="{{step === 'pass'}}">
+    <view class="section-title">审核通过并派单</view>
+    <view class="form-field">
+      <text class="form-label">指派维修人 <text class="req">*</text></text>
+      <text class="form-hint">仅展示对该资产有权限的人员，按组织分组多选</text>
+      <view class="worker-tree" wx:if="{{workerGroups.length}}">
+        <view wx:for="{{workerGroups}}" wx:key="org" class="worker-org">
+          <text class="worker-org-title">{{item.org}}</text>
+          <view
+            wx:for="{{item.workers}}"
+            wx:for-item="w"
+            wx:key="account"
+            class="worker-item {{w.checked ? 'checked' : ''}}"
+            bindtap="toggleWorker"
+            data-account="{{w.account}}"
+          >
+            <view class="check {{w.checked ? 'on' : ''}}"></view>
+            <view class="worker-info">
+              <text class="worker-name">{{w.name}}</text>
+              <text class="worker-meta">{{w.account}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="worker-empty" wx:else>该资产权限范围内暂无可派维修人员</view>
+      <text class="selected-hint">已选 {{selectedCount}} 人</text>
+    </view>
+    <view class="form-field">
+      <text class="form-label">审批意见</text>
+      <textarea
+        class="form-textarea"
+        placeholder="选填"
+        maxlength="200"
+        value="{{approveRemark}}"
+        bindinput="onRemarkInput"
+      />
+    </view>
+    <view class="form-actions">
+      <button class="btn-secondary" bindtap="backChoose">返回</button>
+      <button class="btn-primary" bindtap="submitPass" loading="{{submitting}}">确认派单</button>
+    </view>
+  </view>
+</view>
+
+<!-- 自定义驳回弹框：含「审批意见」标题；空值校验不关闭 -->
+<view
+  class="reject-mask"
+  wx:if="{{showRejectModal}}"
+  catchtouchmove="preventClose"
+>
+  <view class="reject-dialog" catchtap="preventClose">
+    <view class="reject-title">驳回报修</view>
+    <view class="reject-field">
+      <text class="reject-label">审批意见 <text class="req">*</text></text>
+      <textarea
+        class="reject-textarea"
+        placeholder="请填写驳回原因（必填）"
+        maxlength="200"
+        value="{{approveRemark}}"
+        focus="{{showRejectModal}}"
+        bindinput="onRemarkInput"
+      />
+    </view>
+    <view class="reject-footer">
+      <button class="reject-btn cancel" bindtap="closeRejectModal">取消</button>
+      <button class="reject-btn confirm" bindtap="submitReject" loading="{{submitting}}">确定</button>
+    </view>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到待审批报修，或无权操作</view>

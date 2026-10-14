@@ -1,0 +1,143 @@
+<view class="page" wx:if="{{asset}}">
+  <view class="hero">
+    <view class="hero-top">
+      <text class="hero-code">{{asset.code}}</text>
+      <view class="hero-tags">
+        <text class="tag {{asset.statusClass}}">{{asset.status}}</text>
+        <text class="tag {{asset.tagTypeClass}}">{{asset.tagType}}</text>
+      </view>
+    </view>
+    <text class="hero-name">{{asset.name}}</text>
+    <text class="hero-sub">{{asset.categoryName || '—'}} · {{asset.orgName || '—'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-title">基本信息</view>
+    <view class="kv-row">
+      <text class="kv-label">资产编号</text>
+      <text class="kv-value">{{asset.code || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">资产名称</text>
+      <text class="kv-value">{{asset.name || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">资产分类</text>
+      <text class="kv-value">{{asset.categoryName || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">品牌</text>
+      <text class="kv-value">{{asset.brand || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">型号</text>
+      <text class="kv-value">{{asset.model || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">序列号</text>
+      <text class="kv-value">{{asset.serialNo || '—'}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">位置信息</view>
+    <view class="kv-row">
+      <text class="kv-label">所属组织</text>
+      <text class="kv-value">{{asset.orgName || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">所属区域</text>
+      <text class="kv-value">{{asset.regionName || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">具体安装位置</text>
+      <text class="kv-value">{{asset.location || '—'}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">标签信息</view>
+    <view class="kv-row">
+      <text class="kv-label">标签类型</text>
+      <text class="tag {{asset.tagTypeClass}}">{{asset.tagType || '—'}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">购置信息</view>
+    <view class="kv-row">
+      <text class="kv-label">购置方式</text>
+      <text class="kv-value">{{asset.purchaseMethod || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">购置金额（元）</text>
+      <text class="kv-value">{{asset.purchaseAmountText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">购置日期</text>
+      <text class="kv-value">{{asset.purchaseDate || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">保修期限</text>
+      <text class="kv-value">{{asset.warrantyDate || '—'}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">备注</view>
+    <view class="remark-text">{{asset.remark || '—'}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">图片</view>
+    <view class="image-grid" wx:if="{{asset.hasImages}}">
+      <view
+        wx:for="{{asset.images}}"
+        wx:key="path"
+        class="image-item"
+        bindtap="previewImage"
+        data-index="{{index}}"
+      >
+        <image class="image-thumb" src="{{item.path}}" mode="aspectFill" />
+        <text class="image-tip">点击查看</text>
+      </view>
+    </view>
+    <view class="kv-row" wx:else>
+      <text class="kv-label">图片</text>
+      <text class="kv-value muted">—</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">系统信息</view>
+    <view class="kv-row">
+      <text class="kv-label">录入人</text>
+      <text class="kv-value">{{asset.inputBy}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">录入时间</text>
+      <text class="kv-value">{{asset.inputAt}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">资产状态</text>
+      <text class="tag {{asset.statusClass}}">{{asset.status || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">变更时间</text>
+      <text class="kv-value">{{asset.changeAt}}</text>
+    </view>
+  </view>
+
+  <view class="action-bar" wx:if="{{showRepair}}">
+    <button
+      class="btn-primary action-btn"
+      disabled="{{!asset.canRepair}}"
+      bindtap="goRepair"
+    >对此资产发起报修</button>
+    <text class="action-hint" wx:if="{{!asset.canRepairByPerm}}">无「发起报修」权限</text>
+    <text class="action-hint" wx:elif="{{!asset.canRepairByStatus}}">仅「使用中」状态可发起报修</text>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到资产，或不在您的数据权限范围内</view>

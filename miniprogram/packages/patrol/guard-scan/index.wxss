@@ -1,0 +1,10 @@
+@import '../common/patrol-subtask.wxss';
+
+.container {
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+}
+
+.hint-text { display: block; font-size: 24rpx; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 20rpx; }
+.scan-btn { margin-top: 8rpx; background: #EBF4FF; color: var(--color-primary); font-size: 28rpx; }
+.verify-status { display: block; margin-top: 16rpx; font-size: 24rpx; color: var(--color-danger); }
+.verify-status.ok { color: var(--color-success); }

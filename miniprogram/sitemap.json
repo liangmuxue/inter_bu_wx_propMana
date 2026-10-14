@@ -1,0 +1,7 @@
+{
+  "desc": "智慧运维小程序 sitemap",
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+}

@@ -1,0 +1,154 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 24rpx 32rpx calc(48rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.notice {
+  background: #EBF8FF;
+  border: 1rpx solid #BEE3F8;
+}
+
+.notice-text {
+  font-size: 26rpx;
+  color: #2B6CB0;
+  line-height: 1.5;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #F0F2F5;
+}
+
+.kv-row:last-child {
+  border-bottom: none;
+}
+
+.kv-label {
+  flex-shrink: 0;
+  width: 160rpx;
+  font-size: 26rpx;
+  color: #718096;
+}
+
+.kv-value {
+  flex: 1;
+  text-align: right;
+  font-size: 26rpx;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.kv-value.accent {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.remark-label,
+.form-label {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: #718096;
+}
+
+.req {
+  color: var(--color-danger);
+}
+
+.desc-box,
+.form-textarea {
+  margin-top: 8rpx;
+  padding: 16rpx 20rpx;
+  background: #F7FAFC;
+  border-radius: var(--radius);
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: var(--color-text);
+  word-break: break-all;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.form-textarea {
+  min-height: 160rpx;
+}
+
+.result-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 12rpx;
+}
+
+.result-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding: 20rpx;
+  background: #F7FAFC;
+  border-radius: var(--radius);
+  border: 2rpx solid transparent;
+}
+
+.result-option.active.approve {
+  background: #EBF4FF;
+  border-color: #1A5FDB;
+}
+
+.result-option.active.reject {
+  background: #FFF5F5;
+  border-color: #E53E3E;
+}
+
+.result-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.result-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.result-desc {
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+}
+
+.form-field {
+  margin-top: 8rpx;
+}
+
+.btn-submit {
+  margin-top: 32rpx;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 30rpx;
+  border-radius: var(--radius);
+  line-height: 2.4;
+}
+
+.btn-submit::after {
+  border: none;
+}
+
+.empty {
+  padding: 120rpx 24rpx;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 26rpx;
+}

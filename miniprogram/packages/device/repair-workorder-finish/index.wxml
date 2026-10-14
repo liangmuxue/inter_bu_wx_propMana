@@ -1,0 +1,78 @@
+<view class="page" wx:if="{{order}}">
+  <view class="hero card">
+    <view class="hero-top">
+      <text class="hero-name">{{order.assetNameText}}</text>
+      <text class="tag {{order.statusClass}}">{{order.status}}</text>
+    </view>
+    <text class="hero-meta">工单编号 {{order.code}}</text>
+    <text class="hero-meta">报修单号 {{order.requestCodeText}}</text>
+  </view>
+
+  <!-- 同 PC openFinishModal：维修结论* + 维修内容* + 维修图片 + 维修附件 -->
+  <view class="card">
+    <view class="form-field">
+      <text class="form-label">维修结论 <text class="req">*</text></text>
+      <picker mode="selector" range="{{conclusionOptions}}" range-key="label" value="{{conclusionIndex}}" bindchange="onConclusionChange">
+        <view class="form-picker {{repairConclusion ? '' : 'is-placeholder'}}">
+          {{repairConclusion || '请选择维修结论'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-field">
+      <text class="form-label">维修内容 <text class="req">*</text></text>
+      <textarea
+        class="form-textarea"
+        placeholder="请描述维修处理过程与结果"
+        maxlength="500"
+        value="{{finishContent}}"
+        bindinput="onContentInput"
+      />
+    </view>
+
+    <view class="form-field">
+      <view class="field-head">
+        <text class="form-label">维修图片</text>
+        <text class="form-hint">选填，最多 {{maxImages}} 张，点击缩略图查看大图</text>
+      </view>
+      <view class="upload-grid">
+        <view wx:for="{{finishImages}}" wx:key="path" class="upload-item">
+          <image
+            class="upload-thumb"
+            src="{{item.path}}"
+            mode="aspectFill"
+            bindtap="previewImage"
+            data-index="{{index}}"
+          />
+          <text class="upload-remove" catchtap="removeImage" data-index="{{index}}">×</text>
+        </view>
+        <view
+          wx:if="{{finishImages.length < maxImages}}"
+          class="upload-add"
+          bindtap="chooseImages"
+        >
+          <text class="upload-add-icon">+</text>
+          <text class="upload-add-text">上传图片</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-field last">
+      <text class="form-label">维修附件</text>
+      <text class="form-hint">选填，可上传视频（mp4 / mov / avi）</text>
+      <button class="tool-btn" bindtap="chooseVideo" wx:if="{{!videoAttachment}}">上传视频</button>
+      <view class="video-row" wx:if="{{videoAttachment}}">
+        <text class="video-name">{{videoAttachment.name}}</text>
+        <text class="link" bindtap="removeVideo">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer-bar">
+    <button class="btn-secondary" bindtap="onCancel">取消</button>
+    <button class="btn-primary" bindtap="submitFinish" loading="{{submitting}}">确认完工</button>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到可完工工单，或无权操作</view>

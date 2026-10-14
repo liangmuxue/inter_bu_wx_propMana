@@ -1,0 +1,270 @@
+<view class="page wos-detail-page">
+  <view wx:if="{{loading}}" class="container"><view class="empty wos-detail-block">加载中…</view></view>
+  <view wx:elif="{{notFound}}" class="container"><view class="empty wos-detail-block">工单不存在或不在当前账号数据权限范围内</view></view>
+  <scroll-view wx:else class="detail-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="container wos-detail-container">
+      <view class="wos-detail-hero">
+        <view class="wos-detail-hero-top">
+          <text class="wos-detail-hero-code">{{order.id}}</text>
+          <text class="tag hero-tag {{order.statusClass}}">{{order.status}}</text>
+        </view>
+        <text class="wos-detail-hero-content">{{order.content}}</text>
+        <view class="wos-detail-hero-meta">
+          <text wx:if="{{order.createdAt}}" class="wos-detail-hero-meta-item">{{order.createdAt}}</text>
+          <text wx:if="{{order.starterName}}" class="wos-detail-hero-meta-item">{{order.starterName}}</text>
+          <text wx:if="{{order.starterOrg}}" class="wos-detail-hero-meta-item">{{order.starterOrg}}</text>
+          <text wx:if="{{order.regionName}}" class="wos-detail-hero-meta-item">{{order.regionName}}</text>
+        </view>
+      </view>
+
+      <view class="wos-detail-block">
+        <view class="wos-detail-block-title">工单信息</view>
+        <view class="wos-detail-kv-list">
+          <view class="wos-detail-kv is-full">
+            <text class="wos-detail-kv-label">上报内容</text>
+            <text class="wos-detail-kv-value">{{order.content || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">上报人</text>
+            <text class="wos-detail-kv-value">{{order.starterName || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">所属组织</text>
+            <text class="wos-detail-kv-value">{{order.starterOrg || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">上报区域</text>
+            <text class="wos-detail-kv-value">{{order.regionName || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">上报时间</text>
+            <text class="wos-detail-kv-value">{{order.createdAt || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">工单分类</text>
+            <text class="wos-detail-kv-value">{{order.categoryName || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">状态</text>
+            <text class="wos-detail-kv-value">{{order.status || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv is-full">
+            <text class="wos-detail-kv-label">上报图片</text>
+            <view wx:if="{{order.hasReportImages}}" class="upload-grid">
+              <view
+                wx:for="{{order.reportImages}}"
+                wx:key="url"
+                class="upload-item"
+                bindtap="previewReportImage"
+                data-index="{{index}}"
+              >
+                <image class="upload-thumb" src="{{item.url}}" mode="aspectFill" />
+                <text class="upload-tip">点击查看</text>
+              </view>
+            </view>
+            <text wx:else class="wos-detail-kv-value">—</text>
+          </view>
+          <view class="wos-detail-kv is-full">
+            <text class="wos-detail-kv-label">上报附件</text>
+            <view wx:if="{{order.hasReportVideos || order.reportFiles.length}}">
+              <view wx:if="{{order.hasReportVideos}}">
+                <view
+                  wx:for="{{order.reportVideos}}"
+                  wx:key="url"
+                  class="video-entry"
+                  bindtap="playReportVideo"
+                  data-index="{{index}}"
+                >
+                  <view class="video-icon">▶</view>
+                  <view class="video-info">
+                    <text class="video-name">{{item.name}}</text>
+                    <text class="video-hint">点击播放</text>
+                  </view>
+                </view>
+              </view>
+              <view class="attachment-list" wx:if="{{order.reportFiles.length}}">
+                <view
+                  wx:for="{{order.reportFiles}}"
+                  wx:key="name"
+                  class="attachment-row is-link"
+                  bindtap="openReportAttachment"
+                  data-index="{{index}}"
+                >
+                  <text class="attachment-name">{{item.name}}</text>
+                  <text class="attachment-action">查看</text>
+                </view>
+              </view>
+            </view>
+            <text wx:else class="wos-detail-kv-value">—</text>
+          </view>
+          <view class="wos-detail-kv is-full">
+            <text class="wos-detail-kv-label">区域调度管理员</text>
+            <text class="wos-detail-kv-value">{{order.dispatcherNamesText || '—'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="wos-detail-block" wx:if="{{order.hasFeedbackInfo}}">
+        <view class="wos-detail-block-title">不满意反馈</view>
+        <view class="wos-detail-kv-list">
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">反馈人</text>
+            <text class="wos-detail-kv-value">{{order.feedbackByText}}</text>
+          </view>
+          <view class="wos-detail-kv">
+            <text class="wos-detail-kv-label">反馈时间</text>
+            <text class="wos-detail-kv-value">{{order.feedbackAt || '—'}}</text>
+          </view>
+          <view class="wos-detail-kv is-full" wx:if="{{order.feedbackRemark}}">
+            <text class="wos-detail-kv-label">反馈说明</text>
+            <text class="wos-detail-kv-value">{{order.feedbackRemark}}</text>
+          </view>
+          <view class="wos-detail-kv is-full" wx:if="{{order.hasFeedbackImages}}">
+            <text class="wos-detail-kv-label">反馈图片</text>
+            <view class="upload-grid">
+              <view
+                wx:for="{{order.feedbackImages}}"
+                wx:key="url"
+                class="upload-item"
+                bindtap="previewFeedbackImage"
+                data-index="{{index}}"
+              >
+                <image class="upload-thumb" src="{{item.url}}" mode="aspectFill" />
+                <text class="upload-tip">点击查看</text>
+              </view>
+            </view>
+          </view>
+          <view class="wos-detail-kv is-full" wx:if="{{order.hasFeedbackVideos || order.hasFeedbackFiles}}">
+            <text class="wos-detail-kv-label">反馈附件</text>
+            <view>
+              <view wx:if="{{order.hasFeedbackVideos}}">
+                <view
+                  wx:for="{{order.feedbackVideos}}"
+                  wx:key="url"
+                  class="video-entry"
+                  bindtap="playFeedbackVideo"
+                  data-index="{{index}}"
+                >
+                  <view class="video-icon">▶</view>
+                  <view class="video-info">
+                    <text class="video-name">{{item.name}}</text>
+                    <text class="video-hint">点击播放</text>
+                  </view>
+                </view>
+              </view>
+              <view class="attachment-list" wx:if="{{order.hasFeedbackFiles}}">
+                <view
+                  wx:for="{{order.feedbackFiles}}"
+                  wx:key="name"
+                  class="attachment-row is-link"
+                  bindtap="openFeedbackAttachment"
+                  data-index="{{index}}"
+                >
+                  <text class="attachment-name">{{item.name}}</text>
+                  <text class="attachment-action">查看</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="wos-detail-block wos-detail-block-timeline" wx:if="{{order.displayTimeline.length}}">
+        <view class="wos-detail-block-title">流程记录</view>
+        <view class="wos-detail-timeline-wrap">
+          <view class="wos-timeline">
+            <view class="wos-timeline-item" wx:for="{{order.displayTimeline}}" wx:for-index="nodeIdx" wx:key="nodeIdx">
+              <view class="wos-timeline-axis">
+                <view class="wos-timeline-dot {{item.dotClass}}"></view>
+              </view>
+              <view class="wos-timeline-panel">
+                <view class="wos-timeline-head">
+                  <view class="wos-timeline-head-main">
+                    <text class="wos-timeline-stage">{{item.stage}}</text>
+                    <text class="tag {{item.resultTagClass}}">{{item.result}}</text>
+                  </view>
+                  <text class="wos-timeline-time">{{item.time}}</text>
+                </view>
+                <text class="wos-timeline-operator">{{item.operatorLine}}</text>
+                <view class="wos-timeline-body" wx:if="{{item.hasBody}}">
+                  <view wx:if="{{item.fields && item.fields.length}}" class="wos-timeline-compact-meta">
+                    <view class="wos-timeline-meta-row" wx:for="{{item.fields}}" wx:for-item="field" wx:key="label">
+                      <text class="wos-timeline-meta-label">{{field.label}}</text>
+                      <text class="wos-timeline-meta-value">{{field.value}}</text>
+                    </view>
+                  </view>
+                  <view class="wos-timeline-meta-row" wx:if="{{item.contentLabel && item.contentText}}">
+                    <text class="wos-timeline-meta-label">{{item.contentLabel}}</text>
+                    <text class="wos-timeline-meta-value">{{item.contentText}}</text>
+                  </view>
+                  <view class="wos-timeline-meta-row" wx:elif="{{item.contentText}}">
+                    <text class="wos-timeline-meta-value">{{item.contentText}}</text>
+                  </view>
+                  <view wx:if="{{item.hasImages}}" class="wos-timeline-note">
+                    <text class="wos-timeline-note-label">{{item.imageLabel || '图片'}}</text>
+                    <view class="upload-grid readonly">
+                      <view wx:for="{{item.displayImages}}" wx:for-item="img" wx:for-index="imgIdx" wx:key="url" class="upload-item" bindtap="previewTimelineImage" data-node-index="{{nodeIdx}}" data-img-index="{{imgIdx}}">
+                        <image class="upload-thumb" src="{{img.url}}" mode="aspectFill" />
+                        <text class="upload-tip">点击查看</text>
+                      </view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.hasVideos}}" class="wos-timeline-note">
+                    <text class="wos-timeline-note-label">{{item.attachmentLabel || '视频'}}</text>
+                    <view
+                      wx:for="{{item.displayVideos}}"
+                      wx:for-item="vid"
+                      wx:for-index="vidIdx"
+                      wx:key="url"
+                      class="video-entry"
+                      bindtap="playTimelineVideo"
+                      data-node-index="{{nodeIdx}}"
+                      data-vid-index="{{vidIdx}}"
+                    >
+                      <view class="video-icon">▶</view>
+                      <view class="video-info">
+                        <text class="video-name">{{vid.name}}</text>
+                        <text class="video-hint">点击播放</text>
+                      </view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.fileAttachments.length}}" class="wos-timeline-note">
+                    <text class="wos-timeline-note-label">{{item.attachmentLabel || '附件'}}</text>
+                    <view class="attachment-list">
+                      <view
+                        wx:for="{{item.fileAttachments}}"
+                        wx:for-item="file"
+                        wx:for-index="fileIdx"
+                        wx:key="name"
+                        class="attachment-row is-link"
+                        bindtap="openTimelineAttachment"
+                        data-node-index="{{nodeIdx}}"
+                        data-file-index="{{fileIdx}}"
+                      >
+                        <text class="attachment-name">{{file.name}}</text>
+                        <text class="attachment-action">查看</text>
+                      </view>
+                    </view>
+                  </view>
+                  <text class="wos-timeline-remark" wx:if="{{item.showRemark}}">{{item.remark}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="footer-bar" wx:if="{{order && order.canProcess}}">
+    <button
+      wx:for="{{order.actions}}"
+      wx:for-item="act"
+      wx:key="key"
+      wx:if="{{act.key !== 'detail'}}"
+      class="footer-btn {{act.key === 'accept' || act.key === 'finish' ? 'primary' : ''}}"
+      bindtap="onActionTap"
+      data-action="{{act.key}}"
+    >{{act.label}}</button>
+  </view>
+</view>

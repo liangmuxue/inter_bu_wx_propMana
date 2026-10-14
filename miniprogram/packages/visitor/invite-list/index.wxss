@@ -1,0 +1,72 @@
+@import "../../../styles/visitor-biz.wxss";
+
+.query-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  padding: 16rpx 24rpx 12rpx;
+  background: #fff;
+  border-bottom: 1rpx solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 72rpx;
+  padding: 0 24rpx;
+  background: #F7F9FC;
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  height: 72rpx;
+  font-size: 28rpx;
+  color: var(--color-text);
+}
+
+.search-placeholder {
+  color: #A0AEC0;
+}
+
+.search-clear {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: var(--color-primary);
+}
+
+.status-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.status-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  padding-right: 24rpx;
+}
+
+.status-chip {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  background: #fff;
+  border: 1rpx solid var(--color-border);
+  border-radius: 999rpx;
+}
+
+.status-chip.active {
+  color: #fff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  font-weight: 600;
+}

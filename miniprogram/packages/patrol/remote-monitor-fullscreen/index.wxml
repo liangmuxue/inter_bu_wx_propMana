@@ -1,0 +1,27 @@
+<view class="monitor-fullscreen-page">
+  <view class="monitor-preview fullscreen {{videoFit==='contain' ? 'is-fit-contain' : ''}}">
+    <text class="monitor-label">实时视频预览（演示）</text>
+    <text class="monitor-meta">{{monitorMeta}}</text>
+  </view>
+  <view class="monitor-toolbar fullscreen-bar">
+    <view class="monitor-toolbar-right">
+      <text class="tool-chip {{streamType==='main'?'active':''}}" bindtap="onStreamSwitch" data-stream="main">主码流</text>
+      <text class="tool-chip {{streamType==='sub'?'active':''}}" bindtap="onStreamSwitch" data-stream="sub">子码流</text>
+    </view>
+  </view>
+  <view class="video-control-bar fullscreen-controls">
+    <view class="vc-btn {{videoFit==='contain'?'active':''}}" bindtap="onMonitorVc" data-action="fit">
+      <text class="vc-icon">⤢</text>
+    </view>
+    <view class="vc-btn" bindtap="onMonitorVc" data-action="capture">
+      <text class="vc-icon">📷</text>
+    </view>
+    <view class="vc-btn" bindtap="onMonitorVc" data-action="replay">
+      <text class="vc-icon">⏪</text>
+    </view>
+    <view class="vc-btn {{audioOn?'active':''}}" bindtap="onMonitorVc" data-action="audio">
+      <text class="vc-icon">{{audioOn ? '🔊' : '🔇'}}</text>
+    </view>
+  </view>
+  <text class="monitor-exit-fullscreen" bindtap="onExit">退出全屏</text>
+</view>

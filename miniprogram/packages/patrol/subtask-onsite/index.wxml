@@ -1,0 +1,53 @@
+<view class="container" wx:if="{{subtask}}">
+  <view class="card">
+    <view class="card-title">{{subtask.itemName}}</view>
+    <view class="info-row"><text class="info-label">子项编号</text><text class="info-value">{{subtask.code}}</text></view>
+    <view class="info-row"><text class="info-label">巡检项</text><text class="info-value">{{subtask.itemId}}</text></view>
+    <view class="info-row"><text class="info-label">检查方法</text><text class="info-value">现场巡检</text></view>
+    <view class="info-row"><text class="info-label">问题处理人</text><text class="info-value">{{subtask.issueHandlerName}}</text></view>
+    <view class="info-row"><text class="info-label">实际执行人</text><text class="info-value">{{subtask.completedByName || '—'}}</text></view>
+    <view class="info-row"><text class="info-label">打卡顺序</text><text class="info-value">{{orderHint}}</text></view>
+  </view>
+
+  <view class="card standard-panel">
+    <view class="standard-label">检查标准</view>
+    <text class="standard-text">{{subtask.standard}}</text>
+    <block wx:if="{{refImage}}">
+      <text class="ref-image-label">参考图片</text>
+      <view class="ref-image-stage tone-{{refImage.tone}}">
+        <view class="ref-image-placeholder">
+          <text class="ref-image-icon">图</text>
+          <text class="ref-image-name">{{refImage.itemName}}</text>
+          <text class="ref-image-code">{{refImage.itemId}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="hint-card" wx:if="{{!viewOnly}}">
+    每个巡更点须单独填报巡检结果；异常时须填写问题描述。{{orderHint}}
+  </view>
+
+  <view class="card">
+    <view class="card-title row-between">
+      <text>巡更打卡进度</text>
+      <text class="progress-text">{{done}}/{{total}}</text>
+    </view>
+    <progress percent="{{total ? done/total*100 : 0}}" stroke-width="6" activeColor="#1A5FDB" />
+  </view>
+
+  <view wx:for="{{points}}" wx:key="id" class="card point-card {{item.locked ? 'locked' : ''}}" bindtap="openPoint" data-point="{{item}}">
+    <view class="point-head">
+      <text class="point-index">{{index + 1}}</text>
+      <view class="point-info">
+        <text class="point-name">{{item.name}}</text>
+        <text class="point-meta">{{item.id}} · {{item.type}} · {{item.location}}</text>
+      </view>
+      <text class="tag {{item.done ? (item.result === '异常' ? 'tag-danger' : 'tag-success') : (item.locked ? 'tag-info' : 'tag-warning')}}">{{item.statusLabel}}</text>
+    </view>
+    <text class="point-meta" wx:if="{{item.checkinAt}}">打卡时间 {{item.checkinAt}}</text>
+    <text class="point-meta" wx:if="{{item.completedByName}}">打卡人 {{item.completedByName}}</text>
+    <text class="point-action" wx:if="{{!viewOnly && !item.done && !item.locked}}">点击打卡 ›</text>
+    <text class="point-action" wx:if="{{item.done}}">查看巡检结果 ›</text>
+  </view>
+</view>

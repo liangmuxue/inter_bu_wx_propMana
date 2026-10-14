@@ -1,0 +1,53 @@
+<view class="page" wx:if="{{spare}}">
+  <view class="hero card">
+    <view class="hero-top">
+      <text class="hero-code">{{spare.code}}</text>
+      <text class="tag tag-info" wx:if="{{spare.categoryName}}">{{spare.categoryName}}</text>
+    </view>
+    <text class="hero-name">{{spare.name}}</text>
+    <text class="hero-meta">{{spare.orgNameText}} · {{spare.regionNameText}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-title">基本信息</view>
+    <view class="kv-row"><text class="kv-label">物料编码</text><text class="kv-value">{{spare.code}}</text></view>
+    <view class="kv-row"><text class="kv-label">物料名称</text><text class="kv-value">{{spare.name}}</text></view>
+    <view class="kv-row"><text class="kv-label">物料分类</text><text class="kv-value">{{spare.categoryNameText}}</text></view>
+    <view class="kv-row"><text class="kv-label">品牌</text><text class="kv-value">{{spare.brandText}}</text></view>
+    <view class="kv-row"><text class="kv-label">规格型号</text><text class="kv-value">{{spare.modelText}}</text></view>
+    <view class="kv-row"><text class="kv-label">计量单位</text><text class="kv-value">{{spare.unitText}}</text></view>
+    <view class="kv-row"><text class="kv-label">所属组织</text><text class="kv-value">{{spare.orgNameText}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">存放信息</view>
+    <view class="kv-row"><text class="kv-label">存放区域</text><text class="kv-value">{{spare.regionNameText}}</text></view>
+    <view class="kv-row"><text class="kv-label">存放位置</text><text class="kv-value">{{spare.locationText}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">库存信息</view>
+    <view class="stock-row">
+      <view class="stock-card available">
+        <text class="stock-label">可用库存</text>
+        <text class="stock-value">{{spare.availableStockText}}</text>
+      </view>
+      <view class="stock-card frozen">
+        <text class="stock-label">冻结库存</text>
+        <text class="stock-value">{{spare.frozenStockText}}</text>
+      </view>
+      <view class="stock-card total">
+        <text class="stock-label">总库存</text>
+        <text class="stock-value">{{spare.totalStockText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">备注信息</view>
+    <view class="desc-box">{{spare.remarkText}}</view>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到备品，或无权查看</view>

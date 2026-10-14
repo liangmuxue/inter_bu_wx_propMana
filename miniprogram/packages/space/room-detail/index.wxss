@@ -1,0 +1,215 @@
+@import "../../../styles/space-board.wxss";
+@import "../../../styles/space-booking.wxss";
+
+.space-room-detail-page {
+  min-height: 100vh;
+  padding: 0 0 48rpx;
+  background: #f5f6f8;
+  box-sizing: border-box;
+}
+
+.space-room-detail-hero {
+  margin: 20rpx 24rpx 20rpx;
+  overflow: hidden;
+  border-radius: 28rpx;
+  background: #fff;
+  border: 1rpx solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8rpx 28rpx rgba(15, 23, 42, 0.04);
+}
+
+.space-room-detail-swiper {
+  width: 100%;
+  height: 360rpx;
+}
+
+.space-room-detail-cover {
+  width: 100%;
+  height: 360rpx;
+  display: block;
+  background: #e2e8f0;
+}
+
+.space-room-detail-cover.is-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 26rpx;
+}
+
+.space-room-detail-hero-body {
+  padding: 24rpx 28rpx 28rpx;
+}
+
+.space-room-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  align-items: center;
+}
+
+.space-room-category-tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  line-height: 1.4;
+  background: #ebf4ff;
+  color: #2b6cb0;
+}
+
+.space-room-detail-meta,
+.space-room-detail-rules {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.space-room-detail-facilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.space-facility-chip {
+  padding: 8rpx 18rpx;
+  border-radius: 12rpx;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 22rpx;
+}
+
+.space-room-detail-intro {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.space-room-detail-section {
+  margin: 0 24rpx 20rpx;
+  padding: 24rpx 28rpx 28rpx;
+  border-radius: 28rpx;
+  background: #fff;
+  border: 1rpx solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8rpx 28rpx rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+}
+
+.space-room-detail-section-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.space-room-detail-section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.space-room-detail-section-extra {
+  font-size: 24rpx;
+  color: #94a3b8;
+}
+
+.space-room-detail-empty {
+  padding: 32rpx 16rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #94a3b8;
+}
+
+/* 预约信息 · 紧凑卡片（字段同预约记录，版式更轻） */
+.space-booking-list.is-room-detail {
+  gap: 12rpx;
+}
+
+.space-booking-card.is-compact {
+  border-radius: 16rpx;
+  box-shadow: none;
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.space-booking-card.is-compact.is-info,
+.space-booking-card.is-compact.is-success,
+.space-booking-card.is-compact.is-muted,
+.space-booking-card.is-compact.is-warning {
+  border-left-width: 4rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-main {
+  padding: 16rpx 18rpx 14rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-head {
+  align-items: center;
+  gap: 12rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-when {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-when .when-date {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.space-booking-card.is-compact .space-booking-card-when .when-time {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.space-booking-card.is-compact .space-booking-card-head .status-tag {
+  min-height: 36rpx;
+  padding: 0 12rpx;
+  line-height: 36rpx;
+  font-size: 20rpx;
+  border-radius: 8rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-subject {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.space-booking-card.is-compact .space-booking-card-room {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  line-height: 1.4;
+}
+
+.space-booking-card.is-compact .space-booking-card-foot {
+  margin-top: 8rpx;
+  padding-top: 0;
+  border-top: none;
+  gap: 12rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-code {
+  font-size: 20rpx;
+}
+
+.space-booking-card.is-compact .space-booking-card-go {
+  width: 32rpx;
+  height: 32rpx;
+  font-size: 22rpx;
+  background: transparent;
+  color: #cbd5e1;
+}
+
+.page-empty {
+  padding-top: 160rpx;
+}

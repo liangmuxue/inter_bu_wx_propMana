@@ -1,0 +1,58 @@
+<view class="page" wx:if="{{usage}}">
+  <view class="hero card">
+    <view class="hero-top">
+      <text class="hero-code">{{usage.code}}</text>
+      <text class="tag {{usage.statusClass}}">{{usage.status}}</text>
+    </view>
+    <text class="hero-name">{{usage.spareName}}</text>
+    <text class="hero-meta">申请时间 {{usage.createdAt || '—'}}</text>
+    <text class="hero-meta">申请人 {{usage.applicantDisplay}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-title">物料信息</view>
+    <view class="kv-row">
+      <text class="kv-label">物料编码</text>
+      <text
+        class="kv-value link"
+        bindtap="openSpareMaterial"
+        data-id="{{usage.spareId}}"
+        data-code="{{usage.spareCode}}"
+      >{{usage.spareCode || '—'}}</text>
+    </view>
+    <view class="kv-row"><text class="kv-label">物料名称</text><text class="kv-value">{{usage.spareName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">计量单位</text><text class="kv-value">{{usage.spareUnit || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">领用数量</text><text class="kv-value">{{usage.qtyText}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">申请信息</view>
+    <view class="kv-row"><text class="kv-label">申请人</text><text class="kv-value">{{usage.applicantDisplay}}</text></view>
+    <view class="kv-row"><text class="kv-label">申请人组织</text><text class="kv-value">{{usage.applicantOrg || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">领用组织</text><text class="kv-value">{{usage.useOrgNameText}}</text></view>
+    <view class="kv-row"><text class="kv-label">领用区域</text><text class="kv-value">{{usage.useRegionNameText}}</text></view>
+    <view class="kv-row"><text class="kv-label">申请时间</text><text class="kv-value">{{usage.createdAt || '—'}}</text></view>
+    <view class="remark-label">申请备注</view>
+    <view class="desc-box">{{usage.remarkText}}</view>
+  </view>
+
+  <view class="card" wx:if="{{usage.isPending}}">
+    <view class="section-title">审批信息</view>
+    <view class="pending-tip">领用已提交，等待派发审批。</view>
+  </view>
+
+  <view class="card" wx:if="{{!usage.isPending}}">
+    <view class="section-title">审批信息</view>
+    <view class="kv-row"><text class="kv-label">审批人</text><text class="kv-value">{{usage.approverDisplay}}</text></view>
+    <view class="kv-row"><text class="kv-label">审批时间</text><text class="kv-value">{{usage.auditedAtText}}</text></view>
+    <view class="remark-label">派发审批备注</view>
+    <view class="desc-box">{{usage.auditRemarkText}}</view>
+  </view>
+
+  <view class="action-bar" wx:if="{{usage.canApprove}}">
+    <button class="btn-primary" bindtap="onApprove">派发审批</button>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到领用记录，或无权查看</view>

@@ -1,0 +1,18 @@
+<view class="page">
+  <video
+    wx:if="{{src}}"
+    class="player"
+    src="{{src}}"
+    controls
+    autoplay
+    show-center-play-btn
+    object-fit="contain"
+    binderror="onVideoError"
+  />
+  <view wx:else class="empty">
+    <text class="empty-title">{{title}}</text>
+    <text class="empty-hint">暂无视频文件</text>
+  </view>
+  <view wx:if="{{durationSec}}" class="meta">时长 {{durationSec}}″</view>
+  <view wx:if="{{isDemo && !src}}" class="meta demo-hint">演示环境暂无实际视频文件</view>
+</view>

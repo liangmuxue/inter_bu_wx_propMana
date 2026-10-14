@@ -1,0 +1,7 @@
+{
+  "replayDuration": "60 秒",
+  "snapshotRetainDays": "30",
+  "taskRemind": "30 分钟前",
+  "overdueRemind": "超时 30 分钟",
+  "missAlarm": "推送至执行人+主管"
+}

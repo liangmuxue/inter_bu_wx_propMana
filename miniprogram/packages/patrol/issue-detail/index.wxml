@@ -1,0 +1,172 @@
+<view class="container {{issue.hasPageActions ? 'with-action-bar' : ''}}" wx:if="{{issue}}">
+  <view class="card">
+    <view class="card-title">基本信息</view>
+    <view class="info-row">
+      <text class="info-label">问题编号</text>
+      <text class="info-value">{{issue.issueNo}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">状态</text>
+      <text class="tag {{issue.statusClass}}">{{issue.status}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">来源</text>
+      <text class="info-value">{{issue.source}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">关联任务</text>
+      <text class="info-value">{{issue.taskLabel}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">关联巡检对象</text>
+      <text class="info-value">{{issue.objectLabel}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">关联巡检项</text>
+      <text class="info-value">{{issue.itemLabel}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">处理人</text>
+      <text class="info-value">{{issue.handlerName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">创建人</text>
+      <text class="info-value">{{issue.creatorName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">创建时间</text>
+      <text class="info-value">{{issue.createdAt}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{issue.issues.length}}">
+    <view class="card-title">巡检问题</view>
+    <view wx:for="{{issue.issues}}" wx:for-index="issueIdx" wx:key="issueNo" class="issue-read-card">
+      <text class="issue-read-title" wx:if="{{issue.issues.length > 1}}">问题 {{issueIdx + 1}}</text>
+      <view class="issue-read-desc" wx:if="{{item.desc}}">{{item.desc}}</view>
+      <view wx:if="{{item.hasImages}}" class="issue-images-block">
+        <text class="media-label">问题图片</text>
+        <view class="upload-grid readonly">
+          <block wx:for="{{item.displayImages}}" wx:for-item="img" wx:for-index="imgIdx" wx:key="imgIdx">
+            <image
+              wx:if="{{img.showUrl}}"
+              class="upload-thumb previewable"
+              src="{{img.src}}"
+              mode="aspectFill"
+              bindtap="previewIssueImage"
+              binderror="onIssueImageError"
+              data-issue-index="{{issueIdx}}"
+              data-img-index="{{imgIdx}}"
+            />
+            <view
+              wx:else
+              class="issue-image-placeholder tone-{{img.tone}}"
+              bindtap="previewIssueImage"
+              data-issue-index="{{issueIdx}}"
+              data-img-index="{{imgIdx}}"
+            >
+              <text class="placeholder-icon">图</text>
+              <text wx:if="{{img.thumbLabel}}" class="placeholder-label">{{img.thumbLabel}}</text>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view wx:if="{{item.attachments.length}}" class="attachment-list">
+        <text class="media-label">问题附件</text>
+        <view
+          wx:for="{{item.attachments}}"
+          wx:for-item="att"
+          wx:for-index="attIndex"
+          wx:key="name"
+          class="attachment-item playable"
+          bindtap="playIssueAttachment"
+          data-issue-index="{{issueIdx}}"
+          data-att-index="{{attIndex}}"
+        >
+          <text class="attachment-icon">📎</text>
+          <text class="attachment-label">{{att.label || att.name}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{issue.timeline.length}}">
+    <view class="card-title">处理流程</view>
+    <view class="timeline">
+      <view wx:for="{{issue.timeline}}" wx:for-index="nodeIdx" wx:key="key" class="timeline-item">
+        <view class="timeline-axis">
+          <view class="timeline-dot tone-{{item.actionTone}}"></view>
+          <view wx:if="{{nodeIdx < issue.timeline.length - 1}}" class="timeline-line"></view>
+        </view>
+        <view class="timeline-body">
+          <text class="timeline-time">{{item.time}}</text>
+          <view class="timeline-head">
+            <text class="timeline-actor">{{item.actor}}</text>
+            <text class="timeline-action">{{item.action}}</text>
+          </view>
+          <view wx:if="{{item.desc}}" class="timeline-desc">{{item.desc}}</view>
+          <view wx:if="{{item.hasImages}}" class="issue-images-block">
+            <text class="media-label">{{item.imagesLabel || '图片'}}</text>
+            <view class="upload-grid readonly">
+              <block wx:for="{{item.displayImages}}" wx:for-item="img" wx:for-index="imgIdx" wx:key="imgIdx">
+                <image
+                  wx:if="{{img.showUrl}}"
+                  class="upload-thumb previewable"
+                  src="{{img.src}}"
+                  mode="aspectFill"
+                  bindtap="previewTimelineImage"
+                  binderror="onTimelineImageError"
+                  data-node-index="{{nodeIdx}}"
+                  data-img-index="{{imgIdx}}"
+                />
+                <view
+                  wx:else
+                  class="issue-image-placeholder tone-{{img.tone}}"
+                  bindtap="previewTimelineImage"
+                  data-node-index="{{nodeIdx}}"
+                  data-img-index="{{imgIdx}}"
+                >
+                  <text class="placeholder-icon">图</text>
+                  <text wx:if="{{img.thumbLabel}}" class="placeholder-label">{{img.thumbLabel}}</text>
+                </view>
+              </block>
+            </view>
+          </view>
+          <view wx:if="{{item.attachments.length}}" class="attachment-list">
+            <text class="media-label">{{item.attachmentLabel || '附件'}}</text>
+            <view
+              wx:for="{{item.attachments}}"
+              wx:for-item="att"
+              wx:for-index="attIndex"
+              wx:key="name"
+              class="attachment-item playable"
+              bindtap="playTimelineAttachment"
+              data-node-index="{{nodeIdx}}"
+              data-att-index="{{attIndex}}"
+            >
+              <text class="attachment-icon">📎</text>
+              <text class="attachment-label">{{att.label || att.name}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{issue && issue.hasPageActions}}" class="detail-action-bar">
+  <block wx:if="{{issue.canEdit}}">
+    <text class="action-btn" bindtap="openIssueAction" data-url="{{issue.editUrl}}">编辑</text>
+  </block>
+  <block wx:if="{{issue.canRectify}}">
+    <text wx:if="{{issue.canEdit}}" class="action-sep">|</text>
+    <text class="action-btn emphasis" bindtap="openIssueAction" data-url="{{issue.rectifyUrl}}">整改</text>
+  </block>
+  <block wx:if="{{issue.canReinspect}}">
+    <text wx:if="{{issue.canEdit || issue.canRectify}}" class="action-sep">|</text>
+    <text class="action-btn emphasis" bindtap="openIssueAction" data-url="{{issue.reinspectUrl}}">复检</text>
+  </block>
+</view>
+
+<view wx:if="{{!loading && !issue}}" class="empty">未找到问题详情</view>
+<view wx:if="{{loading}}" class="empty">加载中…</view>

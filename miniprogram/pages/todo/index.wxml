@@ -1,0 +1,34 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="empty card">加载中…</view>
+  <view wx:elif="{{!sections.length}}" class="empty card">暂无待办</view>
+  <block wx:else>
+    <view wx:for="{{sections}}" wx:key="id" class="card module-todo-card">
+      <view class="row-head">
+        <view class="module-head-inline">
+          <view class="module-dot" style="background: {{item.color}}"></view>
+          <text class="module-title">{{item.title}}</text>
+        </view>
+        <text
+          wx:if="{{item.linkLabel}}"
+          class="link"
+          bindtap="onSectionLink"
+          data-section="{{item.id}}"
+        >{{item.linkLabel}} ›</text>
+      </view>
+      <view class="stat-grid">
+        <view
+          wx:for="{{item.items}}"
+          wx:for-item="stat"
+          wx:key="key"
+          class="stat-item"
+          bindtap="onStatTap"
+          data-section="{{item.id}}"
+          data-key="{{stat.key}}"
+        >
+          <text class="stat-num {{stat.danger ? 'stat-danger' : ''}}">{{stat.count}}</text>
+          <text class="stat-label">{{stat.label}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

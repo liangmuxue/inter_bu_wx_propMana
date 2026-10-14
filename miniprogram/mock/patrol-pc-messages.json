@@ -1,0 +1,38 @@
+[
+  {
+    "id": "msg-pc-bridge-wos-001",
+    "type": "workorder_remind",
+    "title": "工单流程催办 · 派单",
+    "content": "WO-20260818-001 待派单，请尽快处理",
+    "detail": "工单「15F茶水间水龙头漏水…」（WO-20260818-001）已进入派单环节超过提醒间隔，请区域调度管理员尽快派单或直接完结。",
+    "read": false,
+    "createdAt": "2026-08-18 11:32:00",
+    "recipientId": "lisi",
+    "senderId": "system",
+    "senderName": "系统",
+    "payload": {
+      "orderId": "WO-20260818-001",
+      "stage": "派单",
+      "stageId": "dispatch",
+      "path": "/packages/workorder/detail/index"
+    }
+  },
+  {
+    "id": "msg-pc-bridge-wos-002",
+    "type": "workorder_remind",
+    "title": "工单流程催办 · 接单",
+    "content": "WO-20260818-002 待接单，请尽快处理",
+    "detail": "工单「15F会议室指示牌松动…」（WO-20260818-002）已派单超过提醒间隔，被指派处理人请尽快接单。",
+    "read": false,
+    "createdAt": "2026-08-18 10:12:00",
+    "recipientId": "lisi",
+    "senderId": "system",
+    "senderName": "系统",
+    "payload": {
+      "orderId": "WO-20260818-002",
+      "stage": "接单",
+      "stageId": "accept",
+      "path": "/packages/workorder/detail/index"
+    }
+  }
+]

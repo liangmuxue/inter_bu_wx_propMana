@@ -1,0 +1,158 @@
+<view class="page space-page space-fee-stats-page">
+  <view class="space-fee-filter">
+    <view class="space-fee-view-tabs">
+      <view
+        class="space-fee-view-tab {{viewMode === 'detail' ? 'is-active' : ''}}"
+        data-mode="detail"
+        bindtap="onViewModeChange"
+      >场次明细</view>
+      <view
+        class="space-fee-view-tab {{viewMode === 'org' ? 'is-active' : ''}}"
+        data-mode="org"
+        bindtap="onViewModeChange"
+      >按组织汇总</view>
+    </view>
+
+    <view class="space-fee-filter-card">
+      <view class="space-fee-date-range">
+        <picker class="space-fee-date-picker-wrap" mode="date" value="{{dateFrom}}" end="{{dateTo || ''}}" bindchange="onDateFromChange">
+          <view class="space-fee-date-picker {{dateFrom ? '' : 'is-placeholder'}}">
+            <view class="space-fee-date-icon" aria-hidden="true"></view>
+            <text class="space-fee-date-text">{{dateFrom || '开始日期'}}</text>
+          </view>
+        </picker>
+        <text class="space-fee-filter-sep">至</text>
+        <picker class="space-fee-date-picker-wrap" mode="date" value="{{dateTo}}" start="{{dateFrom || ''}}" bindchange="onDateToChange">
+          <view class="space-fee-date-picker {{dateTo ? '' : 'is-placeholder'}}">
+            <view class="space-fee-date-icon" aria-hidden="true"></view>
+            <text class="space-fee-date-text">{{dateTo || '结束日期'}}</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="space-fee-filter-grid">
+        <picker class="space-fee-filter-cell" mode="selector" range="{{roomOptions}}" range-key="name" value="{{roomIndex}}" bindchange="onRoomChange">
+          <view class="space-fee-filter-chip">
+            <text class="space-fee-filter-chip-text">{{roomOptions[roomIndex].name || '全部会议室'}}</text>
+            <text class="space-fee-filter-caret">▾</text>
+          </view>
+        </picker>
+        <picker class="space-fee-filter-cell" mode="selector" range="{{orgOptions}}" range-key="name" value="{{orgIndex}}" bindchange="onOrgChange">
+          <view class="space-fee-filter-chip">
+            <text class="space-fee-filter-chip-text">{{orgOptions[orgIndex].name || '全部组织'}}</text>
+            <text class="space-fee-filter-caret">▾</text>
+          </view>
+        </picker>
+        <view class="space-fee-filter-cell space-fee-status-multi">
+          <view class="space-fee-filter-chip space-fee-status-trigger {{statusPanelOpen ? 'is-open' : ''}}" bindtap="onToggleStatusPanel">
+            <text class="space-fee-filter-chip-text">{{statusLabel}}</text>
+            <text class="space-fee-filter-caret">{{statusPanelOpen ? '▴' : '▾'}}</text>
+          </view>
+          <view class="space-fee-status-panel" wx:if="{{statusPanelOpen}}">
+            <view
+              wx:for="{{statusOptions}}"
+              wx:key="id"
+              class="space-fee-status-option"
+              data-id="{{item.id}}"
+              catchtap="onToggleStatus"
+            >
+              <checkbox checked="{{item.checked}}" color="#1a5fdb" disabled />
+              <text>{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="space-fee-filter-actions">
+        <text class="space-fee-filter-tip">未选日期时统计全部时段</text>
+        <view class="space-fee-reset" bindtap="onReset">重置</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="space-fee-summary" wx:if="{{summary}}">
+    <view class="space-fee-summary-card">
+      <text class="label">有效场次</text>
+      <text class="value">{{summary.count}}</text>
+    </view>
+    <view class="space-fee-summary-card">
+      <text class="label">场地费</text>
+      <text class="value">{{summary.roomFeeText}}</text>
+    </view>
+    <view class="space-fee-summary-card">
+      <text class="label">会务费</text>
+      <text class="value">{{summary.serviceFeeText}}</text>
+    </view>
+    <view class="space-fee-summary-card is-total">
+      <text class="label">合计</text>
+      <text class="value">{{summary.totalFeeText}}</text>
+    </view>
+  </view>
+  <view class="space-fee-period-hint" wx:if="{{summary}}">当前统计时段：{{summary.periodText || '全部时段'}}</view>
+
+  <scroll-view
+    class="space-fee-list-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="container space-booking-list" wx:if="{{viewMode === 'detail'}}">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="space-booking-card is-property {{item.cardTone}}"
+        bindtap="onOpenDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="space-booking-card-main">
+          <view class="space-booking-card-head">
+            <view class="space-booking-card-when">
+              <text class="when-date">{{item.dateText}}</text>
+              <text class="when-time">{{item.timeText}}</text>
+            </view>
+            <text class="status-tag {{item.statusClass}}">{{item.statusLabel}}</text>
+          </view>
+          <text class="space-booking-card-room">{{item.roomLine}}</text>
+          <text class="space-booking-card-subject" wx:if="{{item.subject}}">{{item.subject}}</text>
+          <view class="space-booking-card-booker">
+            <text>预约人：{{item.userName || '—'}}</text>
+            <text class="booker-org">组织：{{item.userOrg || '—'}}</text>
+          </view>
+          <view class="space-fee-card-rows">
+            <text>场地费 {{item.roomFeeText}}</text>
+            <text>会务费 {{item.serviceFeeText}}</text>
+            <text class="is-total">合计 {{item.totalFeeText}}</text>
+          </view>
+          <view class="space-booking-card-foot">
+            <text class="space-booking-card-code">{{item.code || item.id}}</text>
+            <text class="space-booking-card-go">›</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{!loading && !list.length}}" class="space-empty">暂无费用数据</view>
+    </view>
+
+    <view class="container space-fee-org-list" wx:else>
+      <view
+        wx:for="{{orgList}}"
+        wx:key="id"
+        class="space-fee-org-card"
+      >
+        <view class="space-fee-org-card-head">
+          <text class="space-fee-org-name">{{item.orgName}}</text>
+          <text class="space-fee-org-count">{{item.count}} 场</text>
+        </view>
+        <text class="space-fee-org-period">统计时段 {{item.periodText || '全部时段'}}</text>
+        <view class="space-fee-card-rows">
+          <text>场地费 {{item.roomFeeText}}</text>
+          <text>会务费 {{item.serviceFeeText}}</text>
+          <text class="is-total">合计 {{item.totalFeeText}}</text>
+        </view>
+      </view>
+      <view wx:if="{{!loading && !orgList.length}}" class="space-empty">暂无费用数据</view>
+    </view>
+  </scroll-view>
+</view>

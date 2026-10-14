@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="welcome card">
+    <view class="welcome-title">你好，{{userName || '运维人员'}}</view>
+    <view class="welcome-sub" wx:if="{{userPosition}}">{{userPosition}}</view>
+  </view>
+
+  <view wx:for="{{modules}}" wx:key="id" class="card module-card">
+    <view class="module-head">
+      <view class="module-dot" style="background: {{item.color}}"></view>
+      <view class="module-head-text">
+        <text class="module-title">{{item.title}}</text>
+        <text class="module-desc">{{item.desc}}</text>
+      </view>
+    </view>
+    <view class="entry-grid">
+      <view
+        wx:for="{{item.entries}}"
+        wx:for-item="entry"
+        wx:key="id"
+        class="entry-item"
+        bindtap="onModuleEntry"
+        data-id="{{entry.id}}"
+        data-type="{{entry.type}}"
+        data-action="{{entry.action || ''}}"
+        data-path="{{entry.path || ''}}"
+        data-name="{{entry.name}}"
+      >
+        <text class="entry-name">{{entry.name}}</text>
+      </view>
+    </view>
+  </view>
+</view>

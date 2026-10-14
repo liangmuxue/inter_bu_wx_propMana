@@ -1,0 +1,15 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="empty">加载中…</view>
+  <view wx:elif="{{!message}}" class="empty card">消息不存在或已删除</view>
+  <view wx:else class="card detail-card">
+    <view class="detail-head">
+      <text class="type-tag type-{{message.type}}">{{message.typeLabel}}</text>
+      <text class="detail-time">{{message.createdAt}}</text>
+    </view>
+    <view class="detail-title">{{message.title}}</view>
+    <view class="detail-meta">发件人：{{message.senderName || '系统'}}</view>
+    <view class="detail-body">{{message.detail || message.content}}</view>
+    <button wx:if="{{message.payload.taskId}}" class="btn-primary action-btn" bindtap="goTask">查看巡检任务</button>
+    <button wx:if="{{message.payload.orderId}}" class="btn-primary action-btn" bindtap="goWorkorder">查看工单</button>
+  </view>
+</view>

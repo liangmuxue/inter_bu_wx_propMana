@@ -1,0 +1,72 @@
+<view class="page" wx:if="{{!loading}}">
+  <view class="container">
+    <view class="form-hint card-hint">
+      创建人即为问题复检人；复检方式按所选巡检项检查方式执行。
+    </view>
+
+    <view class="card">
+      <view class="card-title">关联信息</view>
+      <view class="field-label req">关联巡检对象</view>
+      <picker mode="selector" range="{{objects}}" range-key="label" value="{{objectIndex}}" bindchange="onObjectPick">
+        <view class="picker-value {{!objectId ? 'is-placeholder' : ''}}">{{objects[objectIndex].label}}</view>
+      </picker>
+
+      <view class="field-label req">关联巡检项</view>
+      <picker mode="selector" range="{{items}}" range-key="label" value="{{itemIndex}}" bindchange="onItemPick" disabled="{{!objectId}}">
+        <view class="picker-value {{!itemId ? 'is-placeholder' : ''}}">{{items[itemIndex].label}}</view>
+      </picker>
+      <text wx:if="{{methodHint}}" class="field-hint">{{methodHint}}</text>
+
+      <view class="field-label req">问题处理人</view>
+      <picker mode="selector" range="{{handlers}}" range-key="label" value="{{handlerIndex}}" bindchange="onHandlerPick">
+        <view class="picker-value {{!handlerId ? 'is-placeholder' : ''}}">{{handlers[handlerIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view class="card">
+      <view class="card-title">巡检问题</view>
+      <text class="field-hint block-hint">须填写文字描述，图片与视频附件选填</text>
+      <view class="field-label req">问题描述</view>
+      <textarea
+        class="textarea"
+        placeholder="请描述发现的问题"
+        maxlength="500"
+        value="{{desc}}"
+        bindinput="onDescInput"
+      />
+
+      <view class="field-label">问题图片</view>
+      <text class="field-hint">选填，最多 {{maxImages}} 张</text>
+      <view class="upload-grid">
+        <view wx:for="{{images}}" wx:key="path" class="upload-item">
+          <image class="upload-thumb" src="{{item.path}}" mode="aspectFill" />
+          <text class="upload-remove" bindtap="removeImage" data-index="{{index}}">×</text>
+        </view>
+        <view wx:if="{{images.length < maxImages}}" class="upload-add" bindtap="chooseImages">
+          <text class="upload-add-icon">+</text>
+          <text class="upload-add-text">上传</text>
+        </view>
+      </view>
+
+      <view class="field-label">问题附件</view>
+      <text class="field-hint">选填，可上传视频</text>
+      <view class="attachment-actions">
+        <button class="tool-btn secondary" bindtap="chooseAttachments">上传视频</button>
+      </view>
+      <view wx:if="{{attachments.length}}" class="attachment-list editable">
+        <view wx:for="{{attachments}}" wx:key="path" class="attachment-row">
+          <text class="attachment-name">📎 {{item.label || item.name}}</text>
+          <text class="attachment-remove" bindtap="removeAttachment" data-index="{{index}}">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-bar">
+    <button class="btn-primary submit-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">
+      {{isEdit ? '保存' : '提交上报'}}
+    </button>
+  </view>
+</view>
+
+<view wx:if="{{loading}}" class="empty">加载中…</view>

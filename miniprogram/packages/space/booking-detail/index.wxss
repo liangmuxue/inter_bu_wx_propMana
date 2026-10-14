@@ -1,0 +1,9 @@
+@import "../../../styles/space-board.wxss";
+@import "../../../styles/space-booking.wxss";
+
+.page-empty {
+  min-height: 100vh;
+  padding: 80rpx 32rpx;
+  background: #f3f6fb;
+  box-sizing: border-box;
+}

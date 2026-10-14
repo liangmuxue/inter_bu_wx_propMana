@@ -1,0 +1,30 @@
+@import '../common/patrol-subtask.wxss';
+
+.hint-card {
+  margin-bottom: 24rpx;
+  padding: 20rpx 24rpx;
+  background: #EBF4FF;
+  border-radius: var(--radius);
+  font-size: 24rpx;
+  color: var(--color-primary);
+  line-height: 1.5;
+}
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+.progress-text { font-size: 26rpx; color: var(--color-primary); font-weight: 600; }
+.point-card.locked { opacity: 0.55; }
+.point-head { display: flex; align-items: flex-start; gap: 16rpx; }
+.point-index {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background: #EBF4FF;
+  color: var(--color-primary);
+  border-radius: 50%;
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+.point-info { flex: 1; min-width: 0; }
+.point-name { display: block; font-size: 30rpx; font-weight: 600; }
+.point-meta { display: block; margin-top: 8rpx; font-size: 24rpx; color: var(--color-text-secondary); line-height: 1.4; }
+.point-action { display: block; margin-top: 12rpx; font-size: 24rpx; color: var(--color-primary); }

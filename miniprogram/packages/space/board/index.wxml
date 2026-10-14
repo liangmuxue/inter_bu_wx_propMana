@@ -1,0 +1,95 @@
+<view class="space-page">
+  <view class="space-query-panel">
+    <view class="space-search">
+      <input
+        class="space-search-input"
+        placeholder="搜索会议室名称、区域、设施"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+      />
+    </view>
+    <view class="space-calendar">
+      <view class="space-month-nav">
+        <view class="space-month-shift" bindtap="onMonthShift" data-offset="-1">‹</view>
+        <text class="space-month-label">{{monthLabel}}</text>
+        <view class="space-month-shift" bindtap="onMonthShift" data-offset="1">›</view>
+      </view>
+      <view class="space-home-calendar-main">
+        <view class="space-home-date-nav" bindtap="onDateStripScroll" data-offset="-1">‹</view>
+        <scroll-view
+          scroll-x
+          class="space-home-date-strip"
+          show-scrollbar="{{false}}"
+          scroll-into-view="{{dateScrollIntoView}}"
+          scroll-with-animation
+          bindscroll="onStripScroll"
+        >
+          <view
+            wx:for="{{dateStrip}}"
+            wx:key="date"
+            id="{{item.scrollId}}"
+            class="space-home-date-item {{selectedDate === item.date ? 'active' : ''}} {{item.isToday ? 'is-today' : ''}}"
+            bindtap="onPickDate"
+            data-date="{{item.date}}"
+          >
+            <text class="space-home-weekday">{{item.weekday}}</text>
+            <text class="space-home-day">{{item.dayText}}</text>
+          </view>
+        </scroll-view>
+        <view class="space-home-date-nav" bindtap="onDateStripScroll" data-offset="1">›</view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view
+    class="space-list-scroll"
+    scroll-y
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="space-room-list">
+      <view wx:if="{{loading}}" class="space-empty">加载中...</view>
+      <view
+        wx:for="{{rooms}}"
+        wx:key="id"
+        class="space-room-card {{item.status === '停用' ? 'is-disabled' : ''}}"
+        bindtap="onOpenRoom"
+        data-id="{{item.id}}"
+      >
+        <view class="space-room-top">
+          <view class="space-room-main">
+            <view class="space-room-title-row">
+              <text class="space-room-name">{{item.name}}</text>
+              <text class="space-room-status {{item.statusClass}}">{{item.statusLabel}}</text>
+            </view>
+            <view class="space-room-meta">{{item.capacity}} 人 · {{item.regionName}}</view>
+            <view class="space-facilities" wx:if="{{item.facilitiesText}}">{{item.facilitiesText}}</view>
+          </view>
+          <image wx:if="{{item.imageUrl}}" class="space-room-thumb" src="{{item.imageUrl}}" mode="aspectFill" />
+        </view>
+        <view class="space-slot-board">
+          <view class="space-slot-grid is-compact">
+            <view
+              wx:for="{{item.slotGrid}}"
+              wx:for-item="slot"
+              wx:key="label"
+              class="space-slot is-{{slot.state}} {{slot.runClass}}"
+            >{{slot.label}}</view>
+          </view>
+          <view class="space-slot-foot">
+            <view class="space-legend">
+              <view class="space-legend-item"><view class="space-legend-dot is-available"></view>可预约</view>
+              <view class="space-legend-item"><view class="space-legend-dot is-booked"></view>已预约</view>
+              <view class="space-legend-item"><view class="space-legend-dot is-cleaning"></view>会后保洁</view>
+              <view class="space-legend-item"><view class="space-legend-dot is-blocked"></view>不可预约</view>
+            </view>
+            <text>{{item.bookingCount}} 场已约</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{!loading && !rooms.length}}" class="space-empty">暂无数据权限范围内的会议室</view>
+    </view>
+  </scroll-view>
+</view>

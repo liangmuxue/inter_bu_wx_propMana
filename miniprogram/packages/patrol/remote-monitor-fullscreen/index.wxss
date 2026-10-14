@@ -1,0 +1,41 @@
+@import '../subtask-remote/index.wxss';
+
+page {
+  background: #000;
+  height: 100%;
+}
+
+.monitor-fullscreen-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 24rpx 48rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #000;
+}
+
+.monitor-fullscreen-page .monitor-preview.fullscreen {
+  flex: 1;
+  min-height: 280rpx;
+  border-radius: 0;
+}
+
+.monitor-fullscreen-page .monitor-toolbar.fullscreen-bar {
+  justify-content: flex-end;
+  margin-top: 20rpx;
+}
+
+.monitor-fullscreen-page .video-control-bar.fullscreen-controls {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.monitor-fullscreen-page .video-control-bar.fullscreen-controls .vc-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.monitor-fullscreen-page .monitor-exit-fullscreen {
+  margin-top: 24rpx;
+}

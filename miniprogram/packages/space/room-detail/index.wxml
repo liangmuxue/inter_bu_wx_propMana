@@ -1,0 +1,93 @@
+<view class="space-room-detail-page" wx:if="{{detail}}">
+  <view class="space-room-detail-hero">
+    <swiper
+      wx:if="{{detail.images.length}}"
+      class="space-room-detail-swiper"
+      indicator-dots="{{detail.images.length > 1}}"
+      indicator-color="rgba(255,255,255,0.45)"
+      indicator-active-color="#ffffff"
+      autoplay="{{detail.images.length > 1}}"
+      circular="{{detail.images.length > 1}}"
+      interval="3500"
+    >
+      <swiper-item wx:for="{{detail.images}}" wx:key="*this">
+        <image class="space-room-detail-cover" src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+    <view wx:else class="space-room-detail-cover is-empty">暂无图片</view>
+
+    <view class="space-room-detail-hero-body">
+      <view class="space-room-detail-tags">
+        <text class="space-room-status {{detail.statusClass}}">{{detail.statusLabel}}</text>
+        <text class="space-room-category-tag">{{detail.categoryName}}</text>
+      </view>
+      <view class="space-room-detail-meta">{{detail.metaLine}}</view>
+      <view class="space-room-detail-rules">{{detail.rulesText}}</view>
+      <view class="space-room-detail-facilities" wx:if="{{detail.facilities.length}}">
+        <text wx:for="{{detail.facilities}}" wx:key="*this" class="space-facility-chip">{{item}}</text>
+      </view>
+      <view class="space-room-detail-intro" wx:if="{{detail.intro}}">{{detail.intro}}</view>
+    </view>
+  </view>
+
+  <view class="space-room-detail-section">
+    <view class="space-room-detail-section-hd">
+      <text class="space-room-detail-section-title">预约看板</text>
+      <text class="space-room-detail-section-extra">{{detail.dateText}}</text>
+    </view>
+    <view class="space-slot-board">
+      <view class="space-slot-grid">
+        <view
+          wx:for="{{detail.slotGrid}}"
+          wx:key="label"
+          class="space-slot is-{{item.state}} {{item.runClass}}"
+        >{{item.label}}</view>
+      </view>
+      <view class="space-slot-foot">
+        <view class="space-legend">
+          <view class="space-legend-item"><view class="space-legend-dot is-available"></view>可预约</view>
+          <view class="space-legend-item"><view class="space-legend-dot is-booked"></view>已预约</view>
+          <view class="space-legend-item"><view class="space-legend-dot is-blocked"></view>不可预约</view>
+        </view>
+        <text>{{detail.bookingCount}} 场已约</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="space-room-detail-section">
+    <view class="space-room-detail-section-hd">
+      <text class="space-room-detail-section-title">预约信息</text>
+    </view>
+
+    <view class="space-booking-list is-room-detail" wx:if="{{detail.dayBookings.length}}">
+      <view
+        wx:for="{{detail.dayBookings}}"
+        wx:key="id"
+        class="space-booking-card is-compact {{item.cardTone}}"
+        bindtap="onOpenBooking"
+        data-id="{{item.id}}"
+      >
+        <view class="space-booking-card-main">
+          <view class="space-booking-card-head">
+            <view class="space-booking-card-when">
+              <text class="when-date">{{item.dateText}}</text>
+              <text class="when-time">{{item.timeText}}</text>
+            </view>
+            <text class="status-tag {{item.statusClass}}">{{item.statusLabel}}</text>
+          </view>
+          <text class="space-booking-card-subject">{{item.subject || '未命名会议'}}</text>
+          <text class="space-booking-card-room">{{item.userName || '—'}} · {{item.userOrg || '—'}}</text>
+          <view class="space-booking-card-foot">
+            <text class="space-booking-card-code">{{item.code || item.id}}</text>
+            <text class="space-booking-card-go">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="space-room-detail-empty">无会议预约</view>
+  </view>
+</view>
+
+<view wx:if="{{loading}}" class="space-empty page-empty">加载中...</view>
+<view wx:if="{{!loading && !detail}}" class="space-empty page-empty">会议室不存在或无权查看</view>

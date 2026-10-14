@@ -1,0 +1,114 @@
+<view class="page">
+  <view class="scope-bar">
+    <view class="scope-item {{tab === 'org' ? 'active' : ''}}" bindtap="onTabChange" data-tab="org">组织邀约</view>
+    <view class="scope-item {{tab === 'mine' ? 'active' : ''}}" bindtap="onTabChange" data-tab="mine">我的邀约</view>
+    <view wx:if="{{canCreate}}" class="scope-action" bindtap="openCreateSheet">邀约</view>
+  </view>
+
+  <view class="query-toolbar">
+    <view class="search-box">
+      <input
+        class="search-input"
+        placeholder="搜索单号、访客姓名、手机号"
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+        confirm-type="search"
+        bindconfirm="onKeywordConfirm"
+      />
+      <text wx:if="{{keyword}}" class="search-clear" bindtap="clearKeyword">清除</text>
+    </view>
+    <scroll-view scroll-x class="status-scroll" show-scrollbar="{{false}}" enable-flex>
+      <view class="status-inner">
+        <view
+          wx:for="{{statusFilters}}"
+          wx:key="id"
+          class="status-chip {{status === item.id ? 'active' : ''}}"
+          bindtap="onStatusChange"
+          data-id="{{item.id}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="hint-bar">
+    <text wx:if="{{tab === 'org'}}">展示组织数据权限内被访组织的员工邀约记录。</text>
+    <text wx:else>仅展示本人发起的邀约记录。</text>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="container">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="card item-card"
+        bindtap="onOpenDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="item-head">
+          <view class="item-heading">
+            <text class="biz-chip">{{item.bizLabel}}</text>
+            <text class="item-id">{{item.id}}</text>
+          </view>
+          <text class="status-tag {{item.flowStatusClass}}">{{item.flowStatus}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">访客</text>
+          <text class="kv-value">{{item.visitorName}} · {{item.visitorMobileMasked}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">访问开始</text>
+          <text class="kv-value">{{item.visitStartText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">访问结束</text>
+          <text class="kv-value">{{item.visitEndText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">被访组织</text>
+          <text class="kv-value">{{item.visitDepartmentName}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">被访人</text>
+          <text class="kv-value">{{item.hostName}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">同行人数</text>
+          <text class="kv-value">{{item.companionCount}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">邀约操作人</text>
+          <text class="kv-value">{{item.operatorValue}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">邀约时间</text>
+          <text class="kv-value">{{item.createdAt || '—'}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{!loading && !list.length}}" class="empty">{{tab === 'mine' ? '暂无我的邀约' : '暂无员工邀约'}}</view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{showCreateSheet}}" class="action-sheet-mask" bindtap="closeCreateSheet" catchtouchmove="preventClose">
+    <view class="action-sheet" catchtap="preventClose">
+      <view class="action-sheet-item" bindtap="goCreate" data-mode="normal">
+        普通邀约
+        <small>完整填写后直接生效，无需审批</small>
+      </view>
+      <view class="action-sheet-item" bindtap="goCreate" data-mode="quick">
+        快速邀约
+        <small>仅填姓名与手机号，由访客完善后复核</small>
+      </view>
+      <view class="action-sheet-item action-sheet-cancel" bindtap="closeCreateSheet">取消</view>
+    </view>
+  </view>
+</view>

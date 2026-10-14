@@ -1,0 +1,127 @@
+<view class="page space-page">
+  <view class="space-records-search-wrap">
+    <view class="space-records-search-row">
+      <input
+        class="space-search-input"
+        placeholder="搜索会议室、编号、主题、预约人、组织"
+        value="{{keyword}}"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+      />
+      <view
+        class="space-date-filter-btn {{showDateFilter || dateFilterActive ? 'is-active' : ''}}"
+        bindtap="onToggleDateFilter"
+        hover-class="space-date-filter-btn-hover"
+      >
+        <view class="space-date-filter-icon" aria-label="时间筛选">
+          <view class="cal-top"></view>
+          <view class="cal-body">
+            <view class="cal-dot"></view>
+            <view class="cal-dot"></view>
+            <view class="cal-dot"></view>
+            <view class="cal-dot"></view>
+          </view>
+        </view>
+        <view wx:if="{{dateFilterActive}}" class="space-date-filter-dot"></view>
+      </view>
+    </view>
+
+    <view class="space-date-filter-panel {{showDateFilter ? 'is-open' : ''}}">
+      <view class="space-date-filter-inner">
+        <view class="space-date-filter-fields">
+          <view class="space-date-filter-field">
+            <text class="space-date-filter-label">会议开始</text>
+            <picker
+              mode="date"
+              value="{{pickerDateFrom}}"
+              end="{{draftDateTo || ''}}"
+              bindchange="onDraftDateFromChange"
+            >
+              <view class="space-date-filter-value {{draftDateFrom ? '' : 'is-placeholder'}}">
+                {{draftDateFrom || '请选择'}}
+              </view>
+            </picker>
+          </view>
+          <text class="space-date-filter-sep">至</text>
+          <view class="space-date-filter-field">
+            <text class="space-date-filter-label">会议结束</text>
+            <picker
+              mode="date"
+              value="{{pickerDateTo}}"
+              start="{{draftDateFrom || ''}}"
+              bindchange="onDraftDateToChange"
+            >
+              <view class="space-date-filter-value {{draftDateTo ? '' : 'is-placeholder'}}">
+                {{draftDateTo || '请选择'}}
+              </view>
+            </picker>
+          </view>
+        </view>
+        <view class="space-date-filter-actions">
+          <button class="space-date-filter-reset" bindtap="onResetDateFilter">重置</button>
+          <button class="space-date-filter-apply" bindtap="onApplyDateFilter">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="filter-bar-wrap is-status-only">
+    <scroll-view scroll-x class="filter-bar" show-scrollbar="{{false}}">
+      <view class="filter-inner">
+        <view
+          wx:for="{{statusFilters}}"
+          wx:key="id"
+          class="filter-item {{status === item.id ? 'active' : ''}}"
+          bindtap="onStatusChange"
+          data-id="{{item.id}}"
+        >{{item.label}}</view>
+        <view class="filter-tail"></view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="container space-booking-list">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="space-booking-card is-property {{item.cardTone}}"
+        bindtap="onOpenDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="space-booking-card-main">
+          <view class="space-booking-card-head">
+            <view class="space-booking-card-when">
+              <text class="when-date">{{item.dateText}}</text>
+              <text class="when-time">{{item.timeText}}</text>
+            </view>
+            <text class="status-tag {{item.statusClass}}">{{item.statusLabel}}</text>
+          </view>
+
+          <text class="space-booking-card-room">{{item.roomLine}}</text>
+
+          <view class="space-booking-card-booker">
+            <text>预约人：{{item.userName || '—'}}</text>
+            <text class="booker-org">组织：{{item.userOrg || '—'}}</text>
+          </view>
+
+          <text class="space-booking-card-subject" wx:if="{{item.subject}}">{{item.subject}}</text>
+
+          <view class="space-booking-card-foot">
+            <text class="space-booking-card-code">{{item.code || item.id}}</text>
+            <text class="space-booking-card-go">›</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{!loading && !list.length}}" class="space-empty">暂无预约记录</view>
+    </view>
+  </scroll-view>
+</view>

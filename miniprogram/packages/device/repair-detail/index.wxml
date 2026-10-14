@@ -1,0 +1,100 @@
+<view class="page" wx:if="{{repair}}">
+  <view class="hero card">
+    <view class="hero-top">
+      <text class="hero-code">{{repair.code}}</text>
+      <view class="hero-tags">
+        <text class="tag {{repair.statusClass}}">{{repair.status}}</text>
+        <text class="tag {{repair.faultLevelClass}}">{{repair.faultLevel}}</text>
+      </view>
+    </view>
+    <text class="hero-name">{{repair.assetName}}</text>
+    <text class="hero-meta">报修时间 {{repair.reportTime}}</text>
+    <text class="hero-meta">报修人 {{repair.reporterName}}（{{repair.reporterAccount}}）</text>
+  </view>
+
+  <view class="card">
+    <view class="section-title">资产信息</view>
+    <view class="kv-row"><text class="kv-label">资产编号</text><text class="kv-value">{{repair.assetCode}}</text></view>
+    <view class="kv-row"><text class="kv-label">资产分类</text><text class="kv-value">{{repair.categoryName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">品牌</text><text class="kv-value">{{repair.brand || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">型号</text><text class="kv-value">{{repair.model || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">所属区域</text><text class="kv-value">{{repair.regionName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">安装位置</text><text class="kv-value">{{repair.location || '—'}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">报修信息</view>
+    <view class="kv-row"><text class="kv-label">报修人</text><text class="kv-value">{{repair.reporterDisplay || repair.reporterName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">报修组织</text><text class="kv-value">{{repair.orgName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">报修方式</text><text class="kv-value">{{repair.reportMethod || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">报修时间</text><text class="kv-value">{{repair.reportTime || '—'}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">故障信息</view>
+    <view class="desc-box">{{repair.faultDesc || '—'}}</view>
+
+    <view class="media-block">
+      <text class="media-label">故障图片</text>
+      <view class="upload-grid" wx:if="{{repair.hasFaultImages}}">
+        <view
+          wx:for="{{repair.faultImages}}"
+          wx:key="path"
+          class="upload-item"
+          bindtap="previewImage"
+          data-index="{{index}}"
+        >
+          <image class="upload-thumb" src="{{item.path || item.url}}" mode="aspectFill" />
+          <text class="upload-tip">点击查看</text>
+        </view>
+      </view>
+      <text class="media-empty" wx:else>无</text>
+    </view>
+
+    <view class="media-block">
+      <text class="media-label">故障视频</text>
+      <view
+        class="video-entry"
+        wx:if="{{repair.hasVideo}}"
+        bindtap="playVideo"
+      >
+        <view class="video-icon">▶</view>
+        <view class="video-info">
+          <text class="video-name">{{repair.videoName}}</text>
+          <text class="video-hint">点击播放</text>
+        </view>
+      </view>
+      <text class="media-empty" wx:else>无</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{repair.isPending}}">
+    <view class="section-title">审批信息</view>
+    <view class="pending-tip">报修已提交，等待审批。</view>
+  </view>
+
+  <view class="card" wx:if="{{repair.showApproval}}">
+    <view class="section-title">{{repair.isDispatched ? '审批派单' : '审批信息'}}</view>
+    <view class="kv-row"><text class="kv-label">审批人</text><text class="kv-value">{{repair.approverName || '—'}}</text></view>
+    <view class="kv-row"><text class="kv-label">审批时间</text><text class="kv-value">{{repair.approveTime || '—'}}</text></view>
+    <view class="remark-label">审批意见</view>
+    <view class="desc-box {{repair.isRejected ? 'reject' : ''}}">{{repair.approveRemark || '—'}}</view>
+    <view class="kv-row" wx:if="{{repair.isDispatched}}">
+      <text class="kv-label">指派维修人</text>
+      <text class="kv-value">{{repair.assigneesText}}</text>
+    </view>
+    <view class="kv-row" wx:if="{{repair.workOrderCode}}">
+      <text class="kv-label">工单编号</text>
+      <text
+        wx:if="{{showWorkOrderLink}}"
+        class="kv-value highlight link"
+        bindtap="openWorkOrder"
+        data-code="{{repair.workOrderCode}}"
+      >{{repair.workOrderCode}}</text>
+      <text wx:else class="kv-value">{{repair.workOrderCode}}</text>
+    </view>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{!loading && notFound}}">未找到报修详情</view>
+<view class="empty" wx:if="{{loading}}">加载中…</view>

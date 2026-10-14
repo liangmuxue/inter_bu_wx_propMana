@@ -1,0 +1,47 @@
+.user-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1A202C;
+  line-height: 1.4;
+}
+.user-position {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #718096;
+  line-height: 1.4;
+}
+.menu-card {
+  margin-top: 24rpx;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx 32rpx;
+  font-size: 30rpx;
+}
+.menu-section-title {
+  padding: 20rpx 32rpx 0;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+.menu-item-main {
+  flex: 1;
+  min-width: 0;
+}
+.menu-item-hint {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+.menu-arrow {
+  color: var(--color-text-secondary);
+  font-size: 36rpx;
+  line-height: 1;
+}
+.logout-btn { margin-top: 32rpx; background: #fff; color: var(--color-danger); }

@@ -1,0 +1,70 @@
+<view class="page" wx:if="{{order}}">
+  <view class="hero card">
+    <view class="hero-top">
+      <text class="hero-name">{{order.code}}</text>
+      <text class="tag {{order.statusClass}}">{{order.status}}</text>
+    </view>
+    <text class="hero-meta">{{order.assetName || '—'}}</text>
+    <text class="hero-meta" wx:if="{{order.assetCode}}">{{order.assetCode}}</text>
+  </view>
+
+  <!-- 同 PC：当前指派 + 重新指派维修人（多选必填）+ 转派说明（选填） -->
+  <view class="card">
+    <view class="section-title">转派信息</view>
+    <view class="current-hint">当前指派：{{order.assigneesText}}</view>
+
+    <view class="form-field">
+      <text class="form-label">重新指派维修人 <text class="req">*</text></text>
+      <text class="form-hint">仅展示对该资产有权限的人员，按组织分组多选</text>
+      <view class="search-wrap">
+        <input
+          class="search-input"
+          placeholder="搜索账号/姓名/组织"
+          placeholder-class="search-placeholder"
+          value="{{keyword}}"
+          bindinput="onKeywordInput"
+        />
+      </view>
+      <view class="worker-tree" wx:if="{{displayGroups.length}}">
+        <view wx:for="{{displayGroups}}" wx:key="org" class="worker-org">
+          <text class="worker-org-title">{{item.org}}</text>
+          <view
+            wx:for="{{item.workers}}"
+            wx:for-item="w"
+            wx:key="account"
+            class="worker-item {{w.checked ? 'checked' : ''}}"
+            bindtap="toggleWorker"
+            data-account="{{w.account}}"
+          >
+            <view class="check {{w.checked ? 'on' : ''}}"></view>
+            <view class="worker-info">
+              <text class="worker-name">{{w.name}}</text>
+              <text class="worker-meta">{{w.account}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="worker-empty" wx:else>暂无匹配人员</view>
+      <text class="selected-hint">已选 {{selectedCount}} 人</text>
+    </view>
+
+    <view class="form-field">
+      <text class="form-label">转派说明</text>
+      <textarea
+        class="form-textarea"
+        placeholder="选填"
+        maxlength="200"
+        value="{{transferRemark}}"
+        bindinput="onRemarkInput"
+      />
+    </view>
+  </view>
+
+  <view class="footer-bar">
+    <button class="btn-secondary" bindtap="onCancel">取消</button>
+    <button class="btn-primary" bindtap="submitTransfer" loading="{{submitting}}">确认转派</button>
+  </view>
+</view>
+
+<view class="empty" wx:if="{{loading}}">加载中…</view>
+<view class="empty" wx:if="{{!loading && notFound}}">未找到可转派工单，或无权操作</view>

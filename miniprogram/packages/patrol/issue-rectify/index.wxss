@@ -1,0 +1,41 @@
+@import '../common/patrol-subtask.wxss';
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+}
+
+.card-hint {
+  margin-bottom: 24rpx;
+  padding: 20rpx 24rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  background: #EBF4FF;
+  border-radius: var(--radius);
+}
+
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16rpx 32rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1rpx solid var(--color-border);
+}
+
+.submit-bar .submit-btn {
+  width: 100%;
+  margin: 0;
+}
+
+.video-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #EDF2F7;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}

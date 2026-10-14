@@ -1,0 +1,186 @@
+<view class="page">
+  <view class="scope-bar">
+    <view
+      class="scope-item {{scope === 'org' ? 'active' : ''}}"
+      bindtap="onScopeChange"
+      data-scope="org"
+    >报修工单</view>
+    <view
+      class="scope-item {{scope === 'mine' ? 'active' : ''}}"
+      bindtap="onScopeChange"
+      data-scope="mine"
+    >我的工单</view>
+    <view class="filter-trigger {{queryActive ? 'active' : ''}}" bindtap="openFilterPanel">
+      <text class="filter-icon">筛选</text>
+      <text wx:if="{{queryActive}}" class="filter-dot"></text>
+    </view>
+  </view>
+
+  <view class="filter-bar-wrap">
+    <scroll-view scroll-x class="filter-bar" show-scrollbar="{{false}}">
+      <view class="filter-inner">
+        <view
+          wx:for="{{statusFilters}}"
+          wx:key="id"
+          class="filter-item {{status === item.id ? 'active' : ''}}"
+          bindtap="onStatusChange"
+          data-status="{{item.id}}"
+        >{{item.label}}</view>
+        <view class="filter-tail"></view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="query-summary" wx:if="{{queryActive}}">
+    <text>已启用查询筛选</text>
+    <text class="query-reset" bindtap="resetQuery">清除</text>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="container">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="card item-card"
+        bindtap="openDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="item-head">
+          <text class="item-code">{{item.code}}</text>
+          <text class="tag {{item.statusClass}}">{{item.status}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">报修单号</text>
+          <text class="kv-value">{{item.requestCodeText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">资产编号</text>
+          <text class="kv-value">{{item.assetCodeText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">资产名称</text>
+          <text class="kv-value">{{item.assetNameText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">指派维修人</text>
+          <text class="kv-value">{{item.assigneesText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">派单时间</text>
+          <text class="kv-value">{{item.dispatchTimeText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">维修执行人</text>
+          <text class="kv-value">{{item.executorNameText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">维修完成时间</text>
+          <text class="kv-value">{{item.finishTimeText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">作废人</text>
+          <text class="kv-value">{{item.acceptOrVoidByText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">作废时间</text>
+          <text class="kv-value">{{item.acceptOrVoidTimeText}}</text>
+        </view>
+        <view class="action-row" wx:if="{{item.hasActions}}" catchtap="preventBubble">
+          <button
+            wx:if="{{item.canAccept}}"
+            class="action-btn primary"
+            catchtap="onAccept"
+            data-id="{{item.id}}"
+          >接单</button>
+          <button
+            wx:if="{{item.canTransfer}}"
+            class="action-btn"
+            catchtap="onTransfer"
+            data-id="{{item.id}}"
+          >转派</button>
+          <button
+            wx:if="{{item.canVoid}}"
+            class="action-btn danger"
+            catchtap="onVoid"
+            data-id="{{item.id}}"
+            data-code="{{item.code}}"
+          >作废</button>
+          <button
+            wx:if="{{item.canFinish}}"
+            class="action-btn primary"
+            catchtap="onFinish"
+            data-id="{{item.id}}"
+          >完工</button>
+          <button
+            wx:if="{{item.canView}}"
+            class="action-btn"
+            catchtap="openDetail"
+            data-id="{{item.id}}"
+          >查看</button>
+        </view>
+      </view>
+      <view wx:if="{{!loading && !list.length}}" class="empty">暂无报修工单</view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{showFilterPanel}}" class="filter-mask" bindtap="closeFilterPanel" catchtouchmove="preventClose">
+    <view class="filter-panel" catchtap="preventClose" catchtouchmove="preventClose">
+      <view class="filter-panel-hd">
+        <text class="filter-panel-title">查询条件</text>
+        <text class="filter-panel-close" bindtap="closeFilterPanel">关闭</text>
+      </view>
+      <view class="filter-field">
+        <text class="filter-label">关键词</text>
+        <view class="filter-input-wrap">
+          <input
+            class="filter-input"
+            placeholder="工单号/报修单号/资产/指派/执行人"
+            placeholder-class="filter-input-placeholder"
+            value="{{queryForm.keyword}}"
+            bindinput="onQueryKeywordInput"
+            confirm-type="search"
+            bindconfirm="applyQuery"
+          />
+        </view>
+      </view>
+      <view class="filter-actions">
+        <button class="btn-reset" bindtap="resetQuery">重置</button>
+        <button class="btn-query" bindtap="applyQuery">查询</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 同 PC：作废工单 — 单号；作废原因必填；空值不关闭 -->
+  <view
+    class="void-mask"
+    wx:if="{{showVoidModal}}"
+    catchtouchmove="preventClose"
+  >
+    <view class="void-dialog" catchtap="preventClose">
+      <view class="void-title">{{voidTitle}}</view>
+      <view class="void-field">
+        <text class="void-label">作废原因 <text class="req">*</text></text>
+        <textarea
+          class="void-textarea"
+          placeholder="请填写作废原因（必填）"
+          maxlength="200"
+          value="{{voidReason}}"
+          focus="{{showVoidModal}}"
+          bindinput="onVoidReasonInput"
+        />
+      </view>
+      <view class="void-footer">
+        <button class="void-btn cancel" bindtap="closeVoidModal">取消</button>
+        <button class="void-btn confirm" bindtap="submitVoidModal" loading="{{voidSubmitting}}">确认作废</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,177 @@
+<view class="page">
+  <view class="container" wx:if="{{visit}}">
+    <view class="status-hero tone-{{visit.passAuthTone}}">
+      <text class="hero-eyebrow">{{visit.biz === '员工邀约' ? 'EMPLOYEE INVITATION' : 'VISITOR APPOINTMENT'}}</text>
+      <view class="hero-title-row">
+        <text class="hero-title">{{visit.passAuthStatus}}</text>
+        <text
+          wx:if="{{visit.checkInStatus === '已签到' || visit.checkInStatus === '已签离'}}"
+          class="hero-checkin tone-{{visit.checkInTone}}"
+        >{{visit.checkInStatus}}</text>
+      </view>
+      <text class="hero-hint">{{visit.passHint}}</text>
+    </view>
+
+    <!-- 到访安排（对齐员工端：被访组织 / 被访人 / 访问开始 / 访问结束） -->
+    <view class="card">
+      <view class="card-title">到访安排</view>
+      <view class="kv-row">
+        <text class="kv-label">被访组织</text>
+        <text class="kv-value">{{visit.visitDepartmentName}}</text>
+      </view>
+      <view class="kv-row" wx:if="{{visit.showHostPerson}}">
+        <text class="kv-label">被访人</text>
+        <text class="kv-value">{{visit.hostName}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">访问开始</text>
+        <text class="kv-value">{{visit.visitStartText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">访问结束</text>
+        <text class="kv-value">{{visit.visitEndText}}</text>
+      </view>
+    </view>
+
+    <!-- 访客信息（对齐员工端：访客姓名 / 证件号 / 手机号） -->
+    <view class="card">
+      <view class="card-title">访客信息</view>
+      <view class="kv-row">
+        <text class="kv-label">访客姓名</text>
+        <text class="kv-value">{{visit.visitorName}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">证件号</text>
+        <text class="kv-value">{{visit.idCard || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">手机号</text>
+        <text class="kv-value">{{visit.visitorMobileMasked}}</text>
+      </view>
+    </view>
+
+    <!-- 同行人（对齐员工端：始终展示区块） -->
+    <view class="card">
+      <view class="card-title">同行人（{{visit.companionCount}}人）</view>
+      <block wx:if="{{visit.companions.length}}">
+        <block wx:for="{{visit.companions}}" wx:key="index">
+          <view class="companion-block">
+            <text class="companion-title">同行人{{index + 1}}</text>
+            <view class="kv-row">
+              <text class="kv-label">姓名</text>
+              <text class="kv-value">{{item.name || '—'}}</text>
+            </view>
+            <view class="kv-row">
+              <text class="kv-label">证件号</text>
+              <text class="kv-value">{{item.idCard || '—'}}</text>
+            </view>
+            <view class="kv-row">
+              <text class="kv-label">手机号</text>
+              <text class="kv-value">{{item.phone || '—'}}</text>
+            </view>
+          </view>
+        </block>
+      </block>
+      <view wx:else class="companion-empty">无同行人</view>
+    </view>
+
+    <!-- 补充信息 -->
+    <view class="card">
+      <view class="card-title">补充信息</view>
+      <view class="kv-row">
+        <text class="kv-label">来访事由</text>
+        <text class="kv-value">{{visit.reasonText}}</text>
+      </view>
+    </view>
+
+    <!-- 单据信息 -->
+    <view class="card">
+      <view class="card-title">单据信息</view>
+      <view class="kv-row">
+        <text class="kv-label">单据编号</text>
+        <text class="kv-value">{{visit.id}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">方式</text>
+        <text class="kv-value">{{visit.modeLabel}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">通行授权状态</text>
+        <text class="kv-value">
+          <text class="status-tag {{visit.passAuthStatusClass}}">{{visit.passAuthStatus}}</text>
+        </text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">签到状态</text>
+        <text class="kv-value">
+          <text class="status-tag {{visit.checkInStatusClass}}">{{visit.checkInStatus}}</text>
+        </text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">{{visit.createdLabel}}</text>
+        <text class="kv-value">{{visit.createdAt || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">{{visit.operatorLabel}}</text>
+        <text class="kv-value">{{visit.operatorValue}}</text>
+      </view>
+    </view>
+
+    <!-- 审批信息 -->
+    <view class="card">
+      <view class="card-title">审批信息</view>
+      <view class="kv-row">
+        <text class="kv-label">审批结果</text>
+        <text class="kv-value">审批通过</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">审批人</text>
+        <text class="kv-value">{{visit.approver || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">审批时间</text>
+        <text class="kv-value">{{visit.approvedAt || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">通行权限组</text>
+        <text class="kv-value perm-group">
+          <text>{{visit.permissionGroupDisplay}}</text>
+          <text wx:if="{{visit.permissionRevoked}}" class="status-tag tone-slate perm-revoked">权限已收回</text>
+        </text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">审批说明</text>
+        <text class="kv-value">{{visit.approveRemark || '—'}}</text>
+      </view>
+    </view>
+
+    <view class="action-dock" wx:if="{{visit.canCheckIn || visit.canCheckOut || visit.canVoid || fromScan}}">
+      <button
+        wx:if="{{visit.canVoid}}"
+        class="danger-btn"
+        bindtap="onVoidPass"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+      >作废通行授权</button>
+      <button
+        wx:if="{{visit.canCheckIn}}"
+        class="btn-primary action-btn"
+        bindtap="onCheckIn"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+      >签到</button>
+      <button
+        wx:if="{{visit.canCheckOut}}"
+        class="btn-primary action-btn"
+        bindtap="onCheckOut"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+      >签离</button>
+      <button wx:if="{{fromScan}}" class="ghost-btn" bindtap="goScanAgain">继续扫码</button>
+    </view>
+  </view>
+
+  <view class="container" wx:elif="{{!loading}}">
+    <view class="empty">暂无访客详情</view>
+  </view>
+</view>

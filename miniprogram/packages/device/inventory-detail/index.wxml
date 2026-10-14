@@ -1,0 +1,96 @@
+<view class="page" wx:if="{{task}}">
+  <view class="search-bar">
+    <view class="search-box">
+      <input
+        class="search-input"
+        placeholder="资产编号/名称/分类/组织"
+        value="{{keyword}}"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearch"
+      />
+      <view class="search-icon-btn" catchtap="onSearch" aria-role="button" aria-label="查询">
+        <view class="icon-search"></view>
+      </view>
+      <view class="search-icon-btn" catchtap="onReset" aria-role="button" aria-label="重置">
+        <view class="icon-reset"></view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="filter-bar" enhanced show-scrollbar="{{false}}">
+    <view class="filter-inner">
+      <view
+        wx:for="{{itemFilters}}"
+        wx:key="id"
+        class="filter-item {{itemFilter === item.id ? 'active' : ''}}"
+        bindtap="onItemFilterChange"
+        data-filter="{{item.id}}"
+      >{{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="section-title">明细列表（{{displayItems.length}}）</view>
+  <view wx:if="{{!displayItems.length}}" class="empty card">暂无盘点明细</view>
+  <view wx:for="{{displayItems}}" wx:key="assetId" class="card item-card">
+    <view class="item-head">
+      <text class="item-code" catchtap="openAsset" data-code="{{item.assetCode}}">{{item.assetCode}}</text>
+      <text class="tag {{item.statusClass}}">{{item.invStatus}}</text>
+    </view>
+    <text class="item-name">{{item.assetName}}</text>
+    <view class="kv-row">
+      <text class="kv-label">盘点备注</text>
+      <text class="kv-value">{{item.invRemarkText}}</text>
+    </view>
+    <view class="kv-row kv-row--images">
+      <text class="kv-label">盘点图片</text>
+      <view class="kv-value">
+        <view class="inv-thumbs" wx:if="{{item.hasInvImages}}">
+          <image
+            wx:for="{{item.invImages}}"
+            wx:for-item="img"
+            wx:for-index="imgIdx"
+            wx:key="path"
+            class="inv-thumb"
+            src="{{img.path || img.url}}"
+            mode="aspectFill"
+            catchtap="previewInvImages"
+            data-asset-id="{{item.assetId}}"
+            data-index="{{imgIdx}}"
+          />
+        </view>
+        <text wx:else>—</text>
+      </view>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点时间</text>
+      <text class="kv-value">{{item.invTimeText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点操作人</text>
+      <text class="kv-value">{{item.operatorNameText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">资产分类</text>
+      <text class="kv-value">{{item.categoryName || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">所属组织</text>
+      <text class="kv-value">{{item.orgName || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">所属区域</text>
+      <text class="kv-value">{{item.regionName || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">纳入时状态</text>
+      <text class="kv-value">{{item.snapshotStatus || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">购置方式</text>
+      <text class="kv-value">{{item.purchaseMethod || '—'}}</text>
+    </view>
+  </view>
+</view>
+
+<view wx:elif="{{!loading}}" class="empty">暂无明细数据</view>

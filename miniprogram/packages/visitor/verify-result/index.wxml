@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="container">
+    <view class="card">
+      <view class="card-title">扫码核验</view>
+      <text class="hint-text">对准访客通行凭证二维码扫描，扫描后进行人工签到签离操作。</text>
+
+      <view class="scan-stage" bindtap="onScan">
+        <text class="scan-icon">扫</text>
+        <text class="scan-tip">{{scanning ? '识别中…' : '点击扫码'}}</text>
+      </view>
+
+      <text class="error-text" wx:if="{{errorMsg}}">{{errorMsg}}</text>
+
+      <button
+        class="btn-primary submit-btn"
+        bindtap="onScan"
+        loading="{{scanning}}"
+        disabled="{{scanning}}"
+      >开始扫码</button>
+    </view>
+  </view>
+</view>

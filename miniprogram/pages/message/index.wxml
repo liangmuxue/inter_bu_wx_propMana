@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="toolbar card">
+    <view class="filter-row">
+      <text class="filter-item {{filter === 'all' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="all">全部</text>
+      <text class="filter-item {{filter === 'unread' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="unread">未读{{unread ? ('(' + unread + ')') : ''}}</text>
+    </view>
+    <text class="mark-all" bindtap="onMarkAllRead" wx:if="{{unread > 0}}">全部已读</text>
+  </view>
+
+  <block wx:if="{{list.length}}">
+    <view wx:for="{{list}}" wx:key="id" class="card msg-item {{item.read ? '' : 'unread'}}" bindtap="openDetail" data-id="{{item.id}}">
+      <view class="msg-head">
+        <text class="type-tag type-{{item.type}}">{{item.typeLabel}}</text>
+        <view wx:if="{{!item.read}}" class="dot"></view>
+      </view>
+      <text class="msg-title">{{item.title}}</text>
+      <text class="msg-content">{{item.content}}</text>
+      <text class="msg-time">{{item.createdAt}}</text>
+    </view>
+  </block>
+  <view wx:else class="empty card">暂无消息</view>
+</view>

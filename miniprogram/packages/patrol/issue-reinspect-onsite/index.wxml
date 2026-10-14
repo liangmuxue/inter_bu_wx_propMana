@@ -1,0 +1,307 @@
+<view class="page" wx:if="{{issue}}">
+  <view class="container">
+    <view class="card">
+      <view class="card-title">复检信息</view>
+      <view class="info-row">
+        <text class="info-label">关联巡检项</text>
+        <text class="info-value">{{issue.itemLabel}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">复检方式</text>
+        <text class="info-value">{{methodLabel}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">问题处理人</text>
+        <text class="info-value">{{issue.handlerName}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">待复检问题</view>
+      <view class="issue-read-desc" wx:if="{{issue.desc}}">{{issue.desc}}</view>
+      <view wx:if="{{issue.issues.length && issue.issues[0].hasImages}}" class="issue-images-block">
+        <text class="media-label">问题图片</text>
+        <view class="upload-grid readonly">
+          <block wx:for="{{issue.issues[0].displayImages}}" wx:for-item="img" wx:for-index="imgIdx" wx:key="imgIdx">
+            <image
+              wx:if="{{img.showUrl}}"
+              class="upload-thumb"
+              src="{{img.src}}"
+              mode="aspectFill"
+            />
+            <view wx:else class="issue-image-placeholder tone-{{img.tone}}">
+              <text class="placeholder-icon">图</text>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view wx:if="{{issue.rectifyDesc}}" class="rectify-brief">
+        <view class="section-title">整改说明</view>
+        <view class="rectify-text">{{issue.rectifyDesc}}</view>
+        <view wx:if="{{issue.rectifyAt}}" class="rectify-meta">整改时间：{{issue.rectifyAt}}<text wx:if="{{issue.rectifyBy}}"> · {{issue.rectifyBy}}</text></view>
+      </view>
+    </view>
+
+    <!-- 现场：巡更点打卡；临时上报在列表下方填报复检结果 -->
+    <view class="card" wx:if="{{method === '现场'}}">
+      <view class="card-title">线下巡更打卡复检</view>
+      <text class="field-hint card-hint" wx:if="{{isTempReportOnsite}}">可选巡更点线下打卡验证，并在下方填写复检结果提交（不要求全部打卡）</text>
+      <text class="field-hint card-hint" wx:else>请前往各巡更点打卡页完成验证；最后一个巡更点打卡时可填写复检结果</text>
+      <view class="guard-progress" wx:if="{{guardTotal}}">打卡进度 {{guardDone}}/{{guardTotal}}</view>
+      <view wx:if="{{!guardPoints.length}}" class="empty-inline">该问题关联巡检项未配置巡更点</view>
+      <view wx:for="{{guardPoints}}" wx:key="id" class="guard-card {{checkins[item.id] ? 'is-done' : ''}}">
+        <view class="guard-head">
+          <text class="guard-index">{{index + 1}}</text>
+          <view class="guard-main">
+            <text class="guard-name">{{item.name}}</text>
+            <text class="guard-sub">{{item.id}}<text wx:if="{{item.location}}"> · {{item.location}}</text></text>
+          </view>
+          <text class="tag {{checkins[item.id] ? 'tag-success' : 'tag-warning'}}">{{checkins[item.id] ? '已打卡' : '待打卡'}}</text>
+        </view>
+        <text wx:if="{{checkins[item.id]}}" class="guard-time">{{checkins[item.id]}}</text>
+        <button
+          wx:if="{{!checkins[item.id]}}"
+          size="mini"
+          class="btn-primary checkin-btn"
+          bindtap="goToGuardCheckin"
+          data-id="{{item.id}}"
+        >打卡复检</button>
+      </view>
+
+      <view wx:if="{{isTempReportOnsite}}" class="onsite-reinspect-form">
+        <view class="section-title">复检结果</view>
+        <view class="field-label req">复检结果</view>
+        <picker mode="selector" range="{{resultOptions}}" value="{{resultIndex}}" bindchange="onResultPick">
+          <view class="filter-picker">{{resultOptions[resultIndex]}}</view>
+        </picker>
+        <view class="field-label">复检说明</view>
+        <textarea
+          class="textarea"
+          placeholder="选填，不合格时请说明原因"
+          maxlength="500"
+          value="{{remark}}"
+          bindinput="onRemarkInput"
+        />
+        <view class="field-label">复检附件</view>
+        <text class="field-hint">选填，可上传图片或视频</text>
+        <view class="upload-grid">
+          <view wx:for="{{attachments}}" wx:key="path" class="upload-item">
+            <image wx:if="{{item.type === 'image'}}" class="upload-thumb" src="{{item.path}}" mode="aspectFill" />
+            <view wx:else class="upload-thumb video-thumb">视频</view>
+            <text class="upload-remove" bindtap="removeAttachment" data-index="{{index}}">×</text>
+          </view>
+          <view class="upload-add" bindtap="chooseAttachments">
+            <text class="upload-add-icon">+</text>
+            <text class="upload-add-text">上传</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 远程：监控查看 + 复检结果 -->
+    <block wx:if="{{method === '远程'}}">
+      <view class="card standard-panel">
+        <view class="standard-label">检查标准</view>
+        <text class="standard-text">{{standard}}</text>
+        <block wx:if="{{refImage}}">
+          <text class="ref-image-label">参考图片</text>
+          <view class="ref-image-stage tone-{{refImage.tone}}">
+            <view class="ref-image-placeholder">
+              <text class="ref-image-icon">图</text>
+              <text class="ref-image-name">{{refImage.itemName}}</text>
+              <text class="ref-image-code">{{refImage.itemId}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view class="card monitor-card">
+        <view class="card-title">关联监控设备</view>
+        <view class="field-label">选择设备</view>
+        <picker mode="selector" range="{{deviceLabels}}" value="{{deviceIndex}}" bindchange="onDeviceChange">
+          <view class="device-picker">
+            <text class="device-picker-text">{{currentDeviceLabel}}</text>
+            <text class="device-picker-arrow">▼</text>
+          </view>
+        </picker>
+
+        <view class="tab-row">
+          <text class="tab-item {{monitorTab==='live'?'active':''}}" bindtap="onMonitorTab" data-tab="live">实时视频</text>
+          <text class="tab-item {{monitorTab==='replay'?'active':''}}" bindtap="onMonitorTab" data-tab="replay">录像回放</text>
+          <text class="tab-item {{monitorTab==='snapshot'?'active':''}}" bindtap="onMonitorTab" data-tab="snapshot">抓拍图片</text>
+        </view>
+
+        <block wx:if="{{monitorTab === 'live'}}">
+          <view class="monitor-toolbar">
+            <view class="monitor-toolbar-left">
+              <text class="tool-chip" bindtap="onToggleMonitorFullscreen">全屏</text>
+            </view>
+            <view class="monitor-toolbar-right">
+              <text class="tool-chip {{streamType==='main'?'active':''}}" bindtap="onStreamSwitch" data-stream="main">主码流</text>
+              <text class="tool-chip {{streamType==='sub'?'active':''}}" bindtap="onStreamSwitch" data-stream="sub">子码流</text>
+            </view>
+          </view>
+          <view class="monitor-stage fit-{{videoFit}}">
+            <view class="monitor-preview {{videoFit==='contain' ? 'is-fit-contain' : ''}}">
+              <text class="monitor-label">实时视频预览（演示）</text>
+              <text class="monitor-meta">{{monitorMeta}}</text>
+            </view>
+          </view>
+          <view class="video-control-bar">
+            <view class="vc-btn {{videoFit==='contain'?'active':''}}" bindtap="onMonitorVc" data-action="fit">
+              <text class="vc-icon">⤢</text>
+            </view>
+            <view class="vc-btn" bindtap="onMonitorVc" data-action="capture">
+              <text class="vc-icon">📷</text>
+            </view>
+            <view class="vc-btn" bindtap="onMonitorVc" data-action="replay">
+              <text class="vc-icon">⏪</text>
+            </view>
+            <view class="vc-btn {{audioOn?'active':''}}" bindtap="onMonitorVc" data-action="audio">
+              <text class="vc-icon">{{audioOn ? '🔊' : '🔇'}}</text>
+            </view>
+          </view>
+        </block>
+
+        <block wx:elif="{{monitorTab === 'replay'}}">
+          <view class="monitor-preview replay">
+            <text class="monitor-label">录像回放（演示）</text>
+            <text class="monitor-meta">{{currentDeviceLabel}} · 回放时段 08:00–18:00</text>
+          </view>
+          <view class="playback-bar">
+            <view class="playback-controls">
+              <text class="playback-btn">▶</text>
+              <text class="playback-btn">⏸</text>
+              <picker mode="selector" range="{{replaySpeedOptions}}" value="{{replaySpeedIndex}}" bindchange="onReplaySpeedChange">
+                <view class="playback-speed-picker">
+                  <text class="playback-speed-label">{{replaySpeedLabel}}</text>
+                  <text class="playback-speed-arrow">▼</text>
+                </view>
+              </picker>
+            </view>
+            <view class="timeline-ruler">
+              <text>08:00</text><text>12:00</text><text>16:00</text>
+            </view>
+            <view class="timeline-track">
+              <view class="timeline-segment"></view>
+              <view class="timeline-cursor"></view>
+            </view>
+          </view>
+        </block>
+
+        <block wx:else>
+          <view class="snapshot-status">共 {{snapshotTotal}} 张抓拍 · 当前第 {{snapshotIndex + 1}} 张 · 左右滑动切换</view>
+          <swiper class="snapshot-swiper" current="{{snapshotIndex}}" bindchange="onSnapshotSwipe">
+            <swiper-item wx:for="{{snapshotTimes}}" wx:key="*this">
+              <view class="snapshot-main">
+                <text class="snapshot-device">{{currentDeviceLabel}}</text>
+                <text class="snapshot-time">2026-06-01 {{item}}</text>
+              </view>
+            </swiper-item>
+          </swiper>
+          <scroll-view
+            scroll-x
+            class="snapshot-thumb-scroll"
+            scroll-into-view="{{snapshotScrollIntoView}}"
+            scroll-with-animation
+            enable-flex
+          >
+            <view class="snapshot-thumb-row">
+              <view
+                wx:for="{{snapshotTimes}}"
+                wx:key="*this"
+                id="snap-{{index}}"
+                class="snapshot-thumb {{snapshotIndex === index ? 'active' : ''}}"
+                bindtap="onSnapshotSelect"
+                data-index="{{index}}"
+              >
+                <text>{{item}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </block>
+
+        <text wx:if="{{!devices.length}}" class="device-empty-hint">暂无关联监控设备</text>
+      </view>
+
+      <view class="card">
+        <view class="card-title">复检结果</view>
+        <view class="field-label req">复检结果</view>
+        <picker mode="selector" range="{{resultOptions}}" value="{{resultIndex}}" bindchange="onResultPick">
+          <view class="filter-picker">{{resultOptions[resultIndex]}}</view>
+        </picker>
+        <view class="field-label">复检说明</view>
+        <textarea
+          class="textarea"
+          placeholder="选填，不合格时请说明原因"
+          maxlength="500"
+          value="{{remark}}"
+          bindinput="onRemarkInput"
+        />
+        <view class="field-label">复检附件</view>
+        <text class="field-hint">选填，可上传图片或视频</text>
+        <view class="upload-grid">
+          <view wx:for="{{attachments}}" wx:key="path" class="upload-item">
+            <image wx:if="{{item.type === 'image'}}" class="upload-thumb" src="{{item.path}}" mode="aspectFill" />
+            <view wx:else class="upload-thumb video-thumb">视频</view>
+            <text class="upload-remove" bindtap="removeAttachment" data-index="{{index}}">×</text>
+          </view>
+          <view class="upload-add" bindtap="chooseAttachments">
+            <text class="upload-add-icon">+</text>
+            <text class="upload-add-text">上传</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 自动：系统分析，无需手动提交 -->
+    <view class="card" wx:if="{{method === '自动'}}">
+      <view class="form-hint card-hint">整改完成后，系统将自动根据关联算法模型及通道完成复检分析，并自动更新问题状态，无需手动复检。</view>
+      <view wx:if="{{autoLoading}}" class="auto-loading">
+        <text>系统正在自动分析复检数据…</text>
+      </view>
+      <view wx:if="{{!autoLoading && autoResult}}">
+        <view class="section-title">AI 复检分析</view>
+        <view class="info-row">
+          <text class="info-label">算法模型</text>
+          <text class="info-value">{{autoResult.model}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">关联通道</text>
+          <text class="info-value">{{autoResult.channels}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">复检结论</text>
+          <text class="info-value">{{autoResult.conclusion}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">置信度</text>
+          <text class="info-value">{{autoResult.confidence}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">分析详情</text>
+          <text class="info-value">{{autoResult.detail}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">复检结果</text>
+          <text class="info-value">{{autoResult.result}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">复检说明</text>
+          <text class="info-value">{{autoResult.remark}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-bar" wx:if="{{method === '远程' || (method === '现场' && isTempReportOnsite)}}">
+    <button
+      class="btn-primary submit-btn"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+      bindtap="submit"
+    >提交复检</button>
+  </view>
+</view>
+
+<view wx:if="{{loading}}" class="empty">加载中…</view>

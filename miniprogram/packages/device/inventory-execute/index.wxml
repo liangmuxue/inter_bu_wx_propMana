@@ -1,0 +1,200 @@
+<view class="page" wx:if="{{task}}">
+  <view class="head-card">
+    <view class="head-row">
+      <text class="head-name">{{task.name}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点单号</text>
+      <text class="kv-value">{{task.code}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">计划开始日期</text>
+      <text class="kv-value">{{task.planStartDate || task.planDate || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">计划结束日期</text>
+      <text class="kv-value">{{task.planEndDate || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点进度</text>
+      <text class="kv-value">{{task.progressText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点人</text>
+      <text class="kv-value">{{task.countersText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点范围</text>
+      <text class="kv-value">{{task.scopeSummary || '—'}}</text>
+    </view>
+  </view>
+
+  <view class="scan-bar">
+    <button class="scan-btn" bindtap="onScanQr">二维码扫码</button>
+    <button class="scan-btn nfc" bindtap="onScanNfc">NFC 感应</button>
+  </view>
+
+  <view class="action-bar">
+    <button class="surplus-btn" bindtap="onAddSurplus">新增盘盈</button>
+  </view>
+
+  <view class="toolbar">
+    <input
+      class="search-input"
+      placeholder="资产编号/名称"
+      value="{{keyword}}"
+      confirm-type="search"
+      bindinput="onKeywordInput"
+      bindconfirm="onSearch"
+    />
+    <button class="tool-btn primary" bindtap="onSearch">查询</button>
+    <button class="tool-btn" bindtap="onResetSearch">重置</button>
+  </view>
+
+  <view class="meta-bar">
+    <text class="meta-text">待盘 {{pendingCount}} 项（当前筛选）</text>
+  </view>
+
+  <view class="container">
+    <view
+      wx:for="{{displayItems}}"
+      wx:key="assetCode"
+      class="card item-card"
+    >
+      <view class="item-head">
+        <text class="item-name">{{item.assetName}}</text>
+        <text class="tag {{item.statusClass}}">{{item.invStatus}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">资产编号</text>
+        <text class="kv-value link" catchtap="openAssetDetail" data-code="{{item.assetCode}}">{{item.assetCode}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">盘点状态</text>
+        <text class="kv-value">{{item.invStatus}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">盘点备注</text>
+        <text class="kv-value">{{item.invRemarkText}}</text>
+      </view>
+      <view class="kv-row kv-row--images">
+        <text class="kv-label">盘点图片</text>
+        <view class="kv-value">
+          <view class="inv-thumbs" wx:if="{{item.hasInvImages}}">
+            <image
+              wx:for="{{item.invImages}}"
+              wx:for-item="img"
+              wx:for-index="imgIdx"
+              wx:key="path"
+              class="inv-thumb"
+              src="{{img.path || img.url}}"
+              mode="aspectFill"
+              catchtap="previewInvImages"
+              data-asset-id="{{item.assetId}}"
+              data-index="{{imgIdx}}"
+            />
+          </view>
+          <text wx:else>—</text>
+        </view>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">盘点时间</text>
+        <text class="kv-value">{{item.invTimeText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">盘点操作人</text>
+        <text class="kv-value">{{item.operatorNameText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">资产分类</text>
+        <text class="kv-value">{{item.categoryName || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">所属组织</text>
+        <text class="kv-value">{{item.orgName || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">所属区域</text>
+        <text class="kv-value">{{item.regionName || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">纳入时状态</text>
+        <text class="kv-value">{{item.snapshotStatus || '—'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">购置方式</text>
+        <text class="kv-value">{{item.purchaseMethod || '—'}}</text>
+      </view>
+      <view class="item-actions">
+        <button
+          wx:if="{{item.invStatus === '盘盈'}}"
+          class="action-link danger"
+          catchtap="onDeleteSurplus"
+          data-id="{{item.assetId}}"
+          data-name="{{item.assetName}}"
+        >删除盘盈</button>
+        <button
+          wx:else
+          class="action-link"
+          catchtap="onManualEdit"
+          data-code="{{item.assetCode}}"
+        >录入盘点结果</button>
+      </view>
+    </view>
+    <view wx:if="{{!displayItems.length}}" class="empty">当前筛选下暂无资产</view>
+  </view>
+</view>
+
+<view class="sheet-mask" wx:if="{{showSheet}}" bindtap="closeSheet" catchtouchmove="preventClose">
+  <view class="sheet" catchtap="preventClose">
+    <view class="sheet-hd">
+      <text class="sheet-title">录入盘点结果{{editing ? ' — ' + editing.assetName : ''}}</text>
+      <text class="sheet-close" bindtap="closeSheet">关闭</text>
+    </view>
+    <view class="sheet-asset" wx:if="{{editing}}">
+      <view class="sheet-kv">
+        <text class="sheet-kv-label">资产编号</text>
+        <text class="sheet-kv-value">{{editing.assetCode}}</text>
+      </view>
+      <view class="sheet-kv">
+        <text class="sheet-kv-label">资产名称</text>
+        <text class="sheet-kv-value">{{editing.assetName}}</text>
+      </view>
+    </view>
+    <view class="form-field">
+      <text class="form-label">盘点状态 <text class="req">*</text></text>
+      <picker mode="selector" range="{{resultOptions}}" value="{{resultIndex}}" bindchange="onResultPick">
+        <view class="form-picker">{{resultOptions[resultIndex]}}</view>
+      </picker>
+    </view>
+    <block wx:if="{{showResultExtra}}">
+      <view class="form-field">
+        <text class="form-label">盘点备注</text>
+        <textarea
+          class="form-textarea"
+          maxlength="500"
+          placeholder="选填"
+          value="{{invRemark}}"
+          bindinput="onRemarkInput"
+        />
+      </view>
+      <view class="form-field">
+        <text class="form-label">盘点图片</text>
+        <view class="upload-grid">
+          <view wx:for="{{invImages}}" wx:key="path" class="upload-item">
+            <image
+              class="upload-thumb"
+              src="{{item.path}}"
+              mode="aspectFill"
+              catchtap="previewSheetImages"
+              data-index="{{index}}"
+            />
+            <view class="upload-del" catchtap="removeImage" data-index="{{index}}">×</view>
+          </view>
+          <view wx:if="{{invImages.length < maxImages}}" class="upload-add" catchtap="chooseImages">+</view>
+        </view>
+      </view>
+    </block>
+    <button class="btn-primary submit-btn" loading="{{submitting}}" bindtap="submitResult">保存</button>
+  </view>
+</view>

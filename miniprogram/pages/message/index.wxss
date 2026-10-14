@@ -1,0 +1,87 @@
+.container { padding: 24rpx 32rpx 48rpx; }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+  padding: 20rpx 24rpx;
+}
+
+.filter-row { display: flex; gap: 16rpx; }
+
+.filter-item {
+  padding: 8rpx 24rpx;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  background: #F7FAFC;
+  border-radius: 999rpx;
+}
+
+.filter-item.active {
+  color: #fff;
+  background: var(--color-primary);
+}
+
+.mark-all {
+  font-size: 26rpx;
+  color: var(--color-primary);
+}
+
+.msg-item.unread {
+  border-left: 6rpx solid var(--color-primary);
+}
+
+.msg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.type-tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  border-radius: 999rpx;
+}
+
+.type-task_remind { color: #1A5FDB; background: #EBF4FF; }
+.type-task_urge { color: #C05621; background: #FEEBC8; }
+.type-task_overdue { color: #C53030; background: #FED7D7; }
+.type-workorder_remind { color: #C05621; background: #FEEBC8; }
+
+.msg-title {
+  display: block;
+  font-weight: 600;
+  font-size: 30rpx;
+}
+
+.dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--color-danger);
+}
+
+.msg-content {
+  display: block;
+  margin-top: 12rpx;
+  color: var(--color-text-secondary);
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.msg-time {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+}
+
+.empty {
+  padding: 80rpx 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}

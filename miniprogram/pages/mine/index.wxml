@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="card user-card" wx:if="{{user}}">
+    <view class="user-name">{{user.name}}</view>
+    <view class="user-position" wx:if="{{user.position}}">{{user.position}}</view>
+  </view>
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goChangePassword">
+      <text>修改密码</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="menu-card" wx:if="{{showMockTools}}">
+    <view class="menu-section-title">演示工具（当前账号）</view>
+    <view class="menu-item" bindtap="toggleDenyAllModules">
+      <view class="menu-item-main">
+        <text>模拟所有模块无权限</text>
+        <text class="menu-item-hint">{{denyAllModules ? '已开启 · 含资产报修/报修工单 · 点此关闭' : '已关闭 · 含资产报修/报修工单 · 点此开启'}}</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <button class="logout-btn" bindtap="logout">退出登录</button>
+</view>

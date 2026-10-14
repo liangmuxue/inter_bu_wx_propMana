@@ -1,0 +1,210 @@
+<view class="page" wx:if="{{task}}">
+  <view class="head-card card">
+    <view class="head-row">
+      <text class="head-name">{{task.name}}</text>
+      <text class="tag {{task.statusClass}}">{{task.status}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点单号</text>
+      <text class="kv-value">{{task.code}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">计划开始日期</text>
+      <text class="kv-value">{{task.planStartDate || task.planDate || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">计划结束日期</text>
+      <text class="kv-value">{{task.planEndDate || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点人</text>
+      <text class="kv-value">{{task.countersText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点范围</text>
+      <text class="kv-value">{{task.scopeSummary || '—'}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">完成时间</text>
+      <text class="kv-value">{{task.completedAtText}}</text>
+    </view>
+  </view>
+
+  <view class="stat-bar card" wx:if="{{stats}}">
+    <view class="stat-item">
+      <text class="stat-label">应盘</text>
+      <text class="stat-val">{{stats.total}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">相符</text>
+      <text class="stat-val">{{stats.normal}}</text>
+    </view>
+    <view class="stat-item warn">
+      <text class="stat-label">异常</text>
+      <text class="stat-val">{{stats.abnormal}}</text>
+    </view>
+    <view class="stat-item danger">
+      <text class="stat-label">盘亏</text>
+      <text class="stat-val">{{stats.shortage}}</text>
+    </view>
+    <view class="stat-item info">
+      <text class="stat-label">盘盈</text>
+      <text class="stat-val">{{stats.surplus}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">审核</text>
+      <text class="stat-val">{{stats.auditedCount}}/{{stats.reportCount}}</text>
+    </view>
+  </view>
+
+  <view class="section-title">异常 / 盘亏 / 盘盈明细（{{reportItems.length}}）</view>
+  <view wx:if="{{!reportItems.length}}" class="empty card">本次盘点无异常、盘亏或盘盈记录</view>
+  <view wx:for="{{reportItems}}" wx:key="assetId" class="card item-card">
+    <view class="item-head">
+      <text class="item-code">{{item.assetCode}}</text>
+      <text class="tag {{item.statusClass}}">{{item.invStatus}}</text>
+    </view>
+    <text class="item-name">{{item.assetName}}</text>
+    <view class="kv-row">
+      <text class="kv-label">盘点备注</text>
+      <text class="kv-value">{{item.invRemarkText}}</text>
+    </view>
+    <view class="kv-row kv-row--images">
+      <text class="kv-label">盘点图片</text>
+      <view class="kv-value">
+        <view class="inv-thumbs" wx:if="{{item.hasInvImages}}">
+          <image
+            wx:for="{{item.invImages}}"
+            wx:for-item="img"
+            wx:for-index="imgIdx"
+            wx:key="path"
+            class="inv-thumb"
+            src="{{img.path || img.url}}"
+            mode="aspectFill"
+            catchtap="previewInvImages"
+            data-asset-id="{{item.assetId}}"
+            data-index="{{imgIdx}}"
+          />
+        </view>
+        <text wx:else>—</text>
+      </view>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点操作人</text>
+      <text class="kv-value">{{item.operatorNameText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">盘点时间</text>
+      <text class="kv-value">{{item.invTimeText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">审核状态</text>
+      <text class="kv-value">{{item.auditStatusText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">审核结果</text>
+      <text class="kv-value">{{item.auditResultText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">审核人</text>
+      <text class="kv-value">{{item.auditedByText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">审核时间</text>
+      <text class="kv-value">{{item.auditedAtText}}</text>
+    </view>
+    <view class="kv-row">
+      <text class="kv-label">审核备注</text>
+      <text class="kv-value">{{item.auditRemarkText}}</text>
+    </view>
+    <view class="item-actions" wx:if="{{auditMode && item.canAudit}}">
+      <button
+        class="action-btn primary"
+        catchtap="openAuditItem"
+        data-asset-id="{{item.assetId}}"
+      >审核</button>
+    </view>
+  </view>
+</view>
+
+<view wx:elif="{{!loading}}" class="empty">暂无报告数据</view>
+
+<view class="sheet-mask" wx:if="{{showAuditSheet}}" bindtap="closeAuditSheet" catchtouchmove="preventClose">
+  <view class="sheet sheet--audit" catchtap="preventClose">
+    <view class="sheet-hd">
+      <text class="sheet-title">{{auditTitle}}</text>
+      <text class="sheet-close" bindtap="closeAuditSheet">关闭</text>
+    </view>
+    <view class="sheet-body">
+      <view class="sheet-summary" wx:if="{{auditing}}">
+        <view class="kv-row">
+          <text class="kv-label">资产编号</text>
+          <text class="kv-value">{{auditing.assetCode}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">资产名称</text>
+          <text class="kv-value">{{auditing.assetName}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">盘点状态</text>
+          <text class="kv-value">{{auditing.invStatus}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">盘点备注</text>
+          <text class="kv-value">{{auditing.invRemarkText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">纳入时状态</text>
+          <text class="kv-value">{{auditing.snapshotStatusText}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="kv-label">当前台账状态</text>
+          <text class="kv-value">{{auditing.liveStatus}}</text>
+        </view>
+      </view>
+      <view class="status-priority" wx:if="{{showStatusPriority}}">
+        <view class="status-priority-head">
+          <text class="status-priority-title">状态优先级</text>
+          <text class="status-priority-note">冲突时以更高为准（如已报废不会被盘亏销账改为已丢失）</text>
+        </view>
+        <view class="status-priority-flow">
+          <block wx:for="{{statusPriorityLevels}}" wx:key="name">
+            <view class="status-priority-chip {{item.current ? 'is-current' : ''}}">
+              <text class="status-priority-num">{{item.order}}</text>
+              <text>{{item.name}}</text>
+              <text class="status-priority-cur" wx:if="{{item.current}}">当前</text>
+            </view>
+            <text class="status-priority-arrow" wx:if="{{index < statusPriorityLevels.length - 1}}">›</text>
+          </block>
+        </view>
+      </view>
+      <view class="form-hint" wx:if="{{auditHint}}">{{auditHint}}</view>
+      <view class="form-field">
+        <text class="form-label">审核结果</text>
+        <view class="audit-tabs">
+          <view
+            wx:for="{{auditOptions}}"
+            wx:key="*this"
+            class="audit-tab {{auditOptionIndex === index ? 'active' : ''}}"
+            data-index="{{index}}"
+            bindtap="onAuditResultTap"
+          >{{item}}</view>
+        </view>
+      </view>
+      <view class="form-field form-field--remark">
+        <text class="form-label">审核备注</text>
+        <textarea
+          class="form-textarea"
+          maxlength="500"
+          placeholder="选填"
+          value="{{auditRemark}}"
+          bindinput="onAuditRemarkInput"
+          auto-height="{{false}}"
+        />
+      </view>
+    </view>
+    <view class="sheet-footer">
+      <button class="btn-primary submit-btn" loading="{{submitting}}" bindtap="submitAudit">确认保存</button>
+    </view>
+  </view>
+</view>

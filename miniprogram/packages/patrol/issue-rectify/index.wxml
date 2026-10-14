@@ -1,0 +1,59 @@
+<view class="page" wx:if="{{issue}}">
+  <view class="container">
+    <view class="form-hint card-hint">
+      问题处理人完成整改后提交，创建人将按关联巡检项原检查方式复检。
+    </view>
+
+    <view class="card">
+      <view class="card-title">问题摘要</view>
+      <view class="info-row">
+        <text class="info-label">问题编号</text>
+        <text class="info-value">{{issue.issueNo}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">问题描述</text>
+        <view class="info-value">{{issue.desc}}</view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">关联巡检项</text>
+        <text class="info-value">{{issue.itemLabel}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">整改信息</view>
+      <view class="field-label req">整改说明</view>
+      <textarea
+        class="textarea"
+        placeholder="请说明整改措施及结果"
+        maxlength="500"
+        value="{{rectifyDesc}}"
+        bindinput="onDescInput"
+      />
+      <view class="field-label">整改附件</view>
+      <text class="field-hint">选填，支持图片或视频</text>
+      <view class="upload-grid">
+        <view wx:for="{{files}}" wx:key="path" class="upload-item">
+          <image
+            wx:if="{{item.type === 'image'}}"
+            class="upload-thumb"
+            src="{{item.path}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="upload-thumb video-thumb">视频</view>
+          <text class="upload-remove" bindtap="removeFile" data-index="{{index}}">×</text>
+        </view>
+        <view class="upload-add" bindtap="chooseFiles">
+          <text class="upload-add-icon">+</text>
+          <text class="upload-add-text">上传</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-bar">
+    <button class="btn-primary submit-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">提交整改</button>
+  </view>
+</view>
+
+<view wx:if="{{loading}}" class="empty">加载中…</view>

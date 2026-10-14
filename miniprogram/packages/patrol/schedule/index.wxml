@@ -1,0 +1,159 @@
+<view class="page" wx:if="{{!loading && schedule}}">
+  <view wx:if="{{!schedule.hasTeam}}" class="empty card">暂无数据权限范围内的班组排班</view>
+
+  <block wx:else>
+    <view class="card today-card">
+      <view class="card-title">今日值班</view>
+      <view wx:if="{{schedule.todayOnDuty}}" class="today-main on">
+        <text class="today-tag tag tag-success">今日值班</text>
+        <text class="today-team">{{schedule.todayDutyTeamText}}</text>
+      </view>
+      <view wx:else class="today-main">
+        <text class="today-tag tag tag-info">今日休息</text>
+        <text class="today-sub" wx:if="{{currentTeam && viewTab === 'team'}}">当前班组今日值班：{{currentTeam.todayDutyUserName}}</text>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{schedule.hasMyTeam}}">
+      <view class="card-title">我的班组</view>
+      <view class="my-team-tags">
+        <view class="my-team-tag" wx:for="{{schedule.myTeams}}" wx:key="id">
+          <text class="my-team-name">{{item.name}}</text>
+          <text class="my-team-id">{{item.id}}</text>
+          <text class="tag tag-success" wx:if="{{item.todayOnDuty}}">今日值班</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card hint-card" wx:elif="{{schedule.hasTeam}}">
+      <text class="info-hint">您暂未加入任何班组，仍可查看权限范围内各班组排班</text>
+    </view>
+
+    <view class="card scope-card">
+      <view class="info-row">
+        <text class="info-label">可见班组</text>
+        <text class="info-value">{{schedule.accessibleCount}} 个</text>
+      </view>
+      <view class="info-row" wx:if="{{schedule.myTeamCount}}">
+        <text class="info-label">我所在班组</text>
+        <text class="info-value">{{schedule.myTeamCount}} 个</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="preview-head">
+        <view class="card-title">排班查看</view>
+        <view class="tab-row">
+          <text class="tab-item {{viewTab === 'team' ? 'active' : ''}}" bindtap="onViewTab" data-tab="team">班组排班</text>
+          <text class="tab-item {{viewTab === 'mine' ? 'active' : ''}}" bindtap="onViewTab" data-tab="mine" wx:if="{{schedule.hasMyTeam}}">我的排班</text>
+        </view>
+      </view>
+
+      <block wx:if="{{viewTab === 'team'}}">
+        <view class="form-group">
+          <view class="field-label">选择班组</view>
+          <picker mode="selector" range="{{schedule.teams}}" range-key="pickerLabel" value="{{teamIndex}}" bindchange="onTeamChange">
+            <view class="team-picker">
+              <text>{{currentTeam.name}}（{{currentTeam.id}}）</text>
+              <text class="tag tag-primary" wx:if="{{currentTeam.isMyTeam}}">我的</text>
+            </view>
+          </picker>
+        </view>
+
+        <view wx:if="{{currentTeam}}">
+          <view class="info-row">
+            <text class="info-label">所属组织</text>
+            <text class="info-value">{{currentTeam.orgName}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">排班模式</text>
+            <text class="info-value">{{currentTeam.modeLabel}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">关联计划</text>
+            <view class="info-value">{{currentTeam.linkedPlanText}}</view>
+          </view>
+          <view class="info-row" wx:if="{{currentTeam.isMyTeam}}">
+            <text class="info-label">近30天我值班</text>
+            <text class="info-value">{{currentTeam.myDutyCount30}} 天</text>
+          </view>
+
+          <view class="preview-subhead">
+            <text class="preview-subtitle">排班预览</text>
+            <view class="tab-row">
+              <text class="tab-item {{previewTab === 'week' ? 'active' : ''}}" bindtap="onPreviewTab" data-tab="week">本周</text>
+              <text class="tab-item {{previewTab === 'month' ? 'active' : ''}}" bindtap="onPreviewTab" data-tab="month">近30天</text>
+            </view>
+          </view>
+
+          <block wx:if="{{previewTab === 'week'}}">
+            <view class="week-row {{item.isToday ? 'is-today' : ''}}" wx:for="{{currentTeam.weekDays}}" wx:key="date">
+              <view class="week-main">
+                <text class="week-date">{{item.weekDay}} {{item.date}}</text>
+                <text class="week-duty">{{item.dutyUserName}}</text>
+              </view>
+              <text class="tag {{item.onDuty ? 'tag-success' : 'tag-info'}}">{{item.onDuty ? '我值班' : (item.isToday ? '今日' : '—')}}</text>
+            </view>
+          </block>
+
+          <block wx:else>
+            <view class="month-table">
+              <view class="month-head">
+                <text class="col-date">日期</text>
+                <text class="col-week">星期</text>
+                <text class="col-user">值班人员</text>
+              </view>
+              <view class="month-row {{item.isToday ? 'is-today' : ''}} {{item.isMe ? 'is-me' : ''}}" wx:for="{{currentTeam.monthRows}}" wx:key="date">
+                <text class="col-date">{{item.date}}</text>
+                <text class="col-week">{{item.weekDay}}</text>
+                <text class="col-user">{{item.dutyUserName}}{{item.isMe ? '（我）' : ''}}</text>
+              </view>
+            </view>
+          </block>
+        </view>
+      </block>
+
+      <block wx:else>
+        <view class="info-row">
+          <text class="info-label">近30天值班</text>
+          <text class="info-value">{{schedule.myDutyCount30}} 天</text>
+        </view>
+
+        <view class="preview-subhead">
+          <text class="preview-subtitle">我的排班</text>
+          <view class="tab-row">
+            <text class="tab-item {{previewTab === 'week' ? 'active' : ''}}" bindtap="onPreviewTab" data-tab="week">本周</text>
+            <text class="tab-item {{previewTab === 'month' ? 'active' : ''}}" bindtap="onPreviewTab" data-tab="month">近30天</text>
+          </view>
+        </view>
+
+        <block wx:if="{{previewTab === 'week'}}">
+          <view class="week-row {{item.isToday ? 'is-today' : ''}}" wx:for="{{schedule.myWeekDays}}" wx:key="date">
+            <view class="week-main">
+              <text class="week-date">{{item.weekDay}} {{item.date}}</text>
+              <text class="week-duty">{{item.dutyTeamText}}</text>
+            </view>
+            <text class="tag {{item.onDuty ? 'tag-success' : 'tag-info'}}">{{item.onDuty ? '值班' : '休息'}}</text>
+          </view>
+        </block>
+
+        <block wx:else>
+          <view class="month-table">
+            <view class="month-head">
+              <text class="col-date">日期</text>
+              <text class="col-week">星期</text>
+              <text class="col-user">值班班组</text>
+            </view>
+            <view class="month-row {{item.isToday ? 'is-today' : ''}} {{item.onDuty ? 'is-me' : ''}}" wx:for="{{schedule.myMonthRows}}" wx:key="date">
+              <text class="col-date">{{item.date}}</text>
+              <text class="col-week">{{item.weekDay}}</text>
+              <text class="col-user">{{item.dutyTeamText}}</text>
+            </view>
+          </view>
+        </block>
+      </block>
+    </view>
+  </block>
+</view>
+
+<view wx:if="{{loading}}" class="empty">加载中…</view>

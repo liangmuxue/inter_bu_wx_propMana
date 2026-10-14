@@ -1,0 +1,116 @@
+<view class="page">
+  <view class="container">
+    <view class="card">
+      <view class="card-title">选择资产 <text class="req">*</text></view>
+      <text class="form-hint">仅展示当前账号数据权限内、且状态为「使用中」的资产；扫码/NFC 越权将提示不可报修</text>
+
+      <view class="scan-bar" wx:if="{{!asset}}">
+        <button class="scan-btn" bindtap="onScanQr">二维码关联</button>
+        <button class="scan-btn nfc" bindtap="onScanNfc">NFC 关联</button>
+      </view>
+
+      <view wx:if="{{asset}}" class="asset-box">
+        <view class="kv-row"><text class="kv-label">资产编号</text><text class="kv-value">{{asset.code}}</text></view>
+        <view class="kv-row"><text class="kv-label">资产名称</text><text class="kv-value">{{asset.name}}</text></view>
+        <view class="kv-row"><text class="kv-label">品牌</text><text class="kv-value">{{asset.brand || '—'}}</text></view>
+        <view class="kv-row"><text class="kv-label">型号</text><text class="kv-value">{{asset.model || '—'}}</text></view>
+        <view class="kv-row"><text class="kv-label">资产分类</text><text class="kv-value">{{asset.categoryName || '—'}}</text></view>
+        <view class="kv-row"><text class="kv-label">所属区域</text><text class="kv-value">{{asset.regionName || '—'}}</text></view>
+        <view class="kv-row"><text class="kv-label">安装位置</text><text class="kv-value">{{asset.location || '—'}}</text></view>
+        <view class="asset-actions">
+          <text class="link" bindtap="onScanQr">重新扫码</text>
+          <text class="link" bindtap="onScanNfc">重新 NFC</text>
+          <text class="link muted" bindtap="clearAsset">清除重选</text>
+        </view>
+      </view>
+
+      <view class="form-field" wx:if="{{!asset}}">
+        <text class="form-label">或手动选择资产</text>
+        <picker mode="selector" range="{{assetOptions}}" range-key="label" value="{{assetIndex}}" bindchange="onAssetPick">
+          <view class="form-picker">{{assetOptions.length ? '请选择资产' : '暂无可用资产'}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">报修信息</view>
+      <view class="kv-row">
+        <text class="kv-label">报修单号</text>
+        <text class="kv-value muted">{{codeHint}}</text>
+      </view>
+      <view class="form-field">
+        <text class="form-label">报修时间 <text class="req">*</text></text>
+        <view class="datetime-row">
+          <picker mode="date" value="{{reportDate}}" bindchange="onReportDateChange">
+            <view class="form-picker flex">{{reportDate || '选择日期'}}</view>
+          </picker>
+          <picker mode="time" value="{{reportTimePart}}" bindchange="onReportTimeChange">
+            <view class="form-picker flex">{{reportTimePart || '选择时间'}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">报修人</text>
+        <text class="kv-value">{{reporterDisplay}}</text>
+      </view>
+      <view class="form-field">
+        <text class="form-label">报修组织 <text class="req">*</text></text>
+        <picker mode="selector" range="{{orgOptions}}" range-key="name" value="{{orgIndex}}" bindchange="onOrgPick">
+          <view class="form-picker">{{orgName || '请选择'}}</view>
+        </picker>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">报修方式</text>
+        <text class="kv-value">{{reportMethod}}</text>
+      </view>
+      <text class="form-hint">报修方式根据选资入口自动判断，不可修改</text>
+    </view>
+
+    <view class="card">
+      <view class="card-title">故障信息</view>
+      <view class="form-field">
+        <text class="form-label">故障等级 <text class="req">*</text></text>
+        <picker mode="selector" range="{{levelOptions}}" value="{{levelIndex}}" bindchange="onLevelPick">
+          <view class="form-picker">{{levelOptions[levelIndex]}}</view>
+        </picker>
+      </view>
+      <view class="form-field">
+        <text class="form-label">故障描述 <text class="req">*</text></text>
+        <textarea
+          class="form-textarea"
+          maxlength="500"
+          placeholder="请描述故障现象（至少 5 字）"
+          value="{{faultDesc}}"
+          bindinput="onDescInput"
+        />
+      </view>
+
+      <view class="form-field">
+        <text class="form-label">故障图片</text>
+        <text class="form-hint">选填，最多 {{maxImages}} 张</text>
+        <view class="upload-grid">
+          <view wx:for="{{faultImages}}" wx:key="path" class="upload-item">
+            <image class="upload-thumb" src="{{item.path}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}" />
+            <text class="upload-remove" catchtap="removeImage" data-index="{{index}}">×</text>
+          </view>
+          <view wx:if="{{faultImages.length < maxImages}}" class="upload-add" bindtap="chooseImages">
+            <text class="upload-add-icon">+</text>
+            <text class="upload-add-text">上传</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-field">
+        <text class="form-label">视频附件</text>
+        <text class="form-hint">选填，最多 1 个视频</text>
+        <button class="tool-btn" bindtap="chooseVideo" wx:if="{{!videoAttachment}}">上传视频</button>
+        <view class="video-row" wx:if="{{videoAttachment}}">
+          <text class="video-name">{{videoAttachment.name}}</text>
+          <text class="link" bindtap="removeVideo">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary submit-btn" loading="{{submitting}}" bindtap="submit">提交报修</button>
+  </view>
+</view>
